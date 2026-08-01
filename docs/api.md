@@ -63,6 +63,9 @@ request = await client.async_lock_doors(vin)
 result = await client.async_wait_for_service_request(vin, request)
 ```
 
+All polling helpers raise `TimeoutError` when their configured deadline expires. A nullable
+result therefore represents an upstream response, never a hidden polling timeout.
+
 ## Read-only policy
 
 Read-only mode is enabled by default. A blocked mutation raises `ReadOnlyError` before sending

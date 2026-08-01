@@ -3982,20 +3982,15 @@ class NissanClient:
         if not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be a positive finite number")
 
-        try:
-            async with asyncio.timeout(timeout_seconds):
-                while True:
-                    result = await self.async_get_pnc_service_status(vin)
-                    state = (
-                        result.data.state
-                        if result is not None and result.data is not None
-                        else None
-                    )
-                    if state is not None and state is not transitional_state:
-                        return result
-                    await asyncio.sleep(poll_interval_seconds)
-        except TimeoutError:
-            return None
+        async with asyncio.timeout(timeout_seconds):
+            while True:
+                result = await self.async_get_pnc_service_status(vin)
+                state = (
+                    result.data.state if result is not None and result.data is not None else None
+                )
+                if state is not None and state is not transitional_state:
+                    return result
+                await asyncio.sleep(poll_interval_seconds)
 
     async def async_wait_for_energy_account_status(
         self,
@@ -4011,18 +4006,12 @@ class NissanClient:
         if not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be a positive finite number")
 
-        try:
-            async with asyncio.timeout(timeout_seconds):
-                while True:
-                    result = await self.async_get_energy_account_status(vin)
-                    if (
-                        account_status_polling_outcome(result)
-                        is EnergyAccountPollingOutcome.COMPLETE
-                    ):
-                        return result
-                    await asyncio.sleep(poll_interval_seconds)
-        except TimeoutError:
-            return None
+        async with asyncio.timeout(timeout_seconds):
+            while True:
+                result = await self.async_get_energy_account_status(vin)
+                if account_status_polling_outcome(result) is EnergyAccountPollingOutcome.COMPLETE:
+                    return result
+                await asyncio.sleep(poll_interval_seconds)
 
     async def async_wait_for_public_charge_session_status(
         self,
@@ -4043,18 +4032,15 @@ class NissanClient:
             PublicChargeSessionState.COMPLETED,
             PublicChargeSessionState.FAILED,
         }
-        try:
-            async with asyncio.timeout(timeout_seconds):
-                while True:
-                    result = await self.async_get_public_charge_session_status(vin)
-                    if result is None or result.data is None:
-                        return None
-                    state = result.data.status
-                    if state is None or state in terminal_states:
-                        return result
-                    await asyncio.sleep(poll_interval_seconds)
-        except TimeoutError:
-            return None
+        async with asyncio.timeout(timeout_seconds):
+            while True:
+                result = await self.async_get_public_charge_session_status(vin)
+                if result is None or result.data is None:
+                    return None
+                state = result.data.status
+                if state is None or state in terminal_states:
+                    return result
+                await asyncio.sleep(poll_interval_seconds)
 
     async def async_get_climate_schedules(
         self,

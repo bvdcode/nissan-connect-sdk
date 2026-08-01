@@ -467,7 +467,7 @@ async def test_public_charge_waiter_preserves_service_null_boundaries() -> None:
     assert status_null.data.status is None
 
 
-async def test_pnc_waiters_return_none_on_service_timeout() -> None:
+async def test_pnc_waiters_raise_on_service_timeout() -> None:
     pnc_session = FakeSession(
         graphql_response(
             {
@@ -496,20 +496,19 @@ async def test_pnc_waiters_return_none_on_service_timeout() -> None:
         )
     )
 
-    pnc_result = await make_client(pnc_session).async_wait_for_pnc_service_status(
-        "VIN",
-        PlugAndChargeServiceState.ENABLED,
-        poll_interval_seconds=1,
-        timeout_seconds=0.001,
-    )
-    charge_result = await make_client(charge_session).async_wait_for_public_charge_session_status(
-        "VIN",
-        poll_interval_seconds=1,
-        timeout_seconds=0.001,
-    )
-
-    assert pnc_result is None
-    assert charge_result is None
+    with pytest.raises(TimeoutError):
+        await make_client(pnc_session).async_wait_for_pnc_service_status(
+            "VIN",
+            PlugAndChargeServiceState.ENABLED,
+            poll_interval_seconds=1,
+            timeout_seconds=0.001,
+        )
+    with pytest.raises(TimeoutError):
+        await make_client(charge_session).async_wait_for_public_charge_session_status(
+            "VIN",
+            poll_interval_seconds=1,
+            timeout_seconds=0.001,
+        )
 
 
 def test_pnc_command_outcomes_match_service_mappings() -> None:

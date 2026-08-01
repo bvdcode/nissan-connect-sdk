@@ -200,10 +200,10 @@ async def test_energy_account_waiter_validates_and_times_out_without_extra_io() 
     assert invalid_session.calls == []
 
     timeout_session = FakeSession(graphql_response({"accountStatus": None}))
-    timeout_result = await make_client(timeout_session).async_wait_for_energy_account_status(
-        "VIN",
-        poll_interval_seconds=1,
-        timeout_seconds=0.001,
-    )
-    assert timeout_result is None
+    with pytest.raises(TimeoutError):
+        await make_client(timeout_session).async_wait_for_energy_account_status(
+            "VIN",
+            poll_interval_seconds=1,
+            timeout_seconds=0.001,
+        )
     assert len(timeout_session.calls) == 1
