@@ -1,4 +1,4 @@
-"""Parsing functions preserved from dealer_parsing.py."""
+"""Dealer response parsers."""
 
 from ._dealer_public_parsing import (
     parse_all_dealers,

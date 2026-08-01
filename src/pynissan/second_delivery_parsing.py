@@ -1,4 +1,4 @@
-"""Parsing functions preserved from second_delivery_parsing.py."""
+"""Second-delivery response parsers."""
 
 from ._second_delivery_public_parsing import (
     parse_cancel_second_delivery_appointment,

@@ -1,4 +1,4 @@
-"""Parsing functions preserved from driver_parsing.py."""
+"""Driver and invitation response parsers."""
 
 from ._driver_public_parsing import (
     parse_create_emergency_contact,

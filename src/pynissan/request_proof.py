@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class RequestProof:
-    """Integrity values attached to protected service requests."""
+    """Verification values attached to requests that require them."""
 
     api_attestation: str
     device_status: str
