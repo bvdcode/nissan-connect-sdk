@@ -55,8 +55,7 @@ State-changing methods require `read_only=False` when constructing the client.
 | `async_refresh_vehicle_status()` | Vehicle status refresh |
 
 Vehicle capabilities and account subscriptions determine whether a command is available.
-Protected operations also use the request proof configured on the client when the service
-requires it.
+Operations that require request verification use the request proof configured on the client.
 Most commands return a `ServiceRequest`; pass it to `async_wait_for_service_request()` to wait
 for a terminal result.
 
@@ -65,8 +64,8 @@ request = await client.async_lock_doors(vin)
 result = await client.async_wait_for_service_request(vin, request)
 ```
 
-All polling helpers raise `TimeoutError` when their configured deadline expires. A nullable
-result therefore represents an upstream response, never a hidden polling timeout.
+All polling helpers raise `TimeoutError` when their configured deadline expires. Nullable
+results retain the response semantics of the corresponding operation.
 
 ## Read-only policy
 

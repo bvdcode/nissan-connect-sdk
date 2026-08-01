@@ -1,4 +1,4 @@
-"""Parsing functions preserved from extended_vehicle_parsing.py."""
+"""Extended vehicle response parsers."""
 
 from ._extended_vehicle_public_parsing import (
     parse_driving_history,

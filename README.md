@@ -5,9 +5,9 @@
 [![Python](https://img.shields.io/pypi/pyversions/pynissan.svg)](https://pypi.org/project/pynissan/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`pynissan` is an independently maintained async Python client for MyNISSAN connected
-vehicle services. It provides a typed API for vehicle telemetry, charging, climate,
-remote commands, account data, and connected-service features.
+`pynissan` is an async Python client for MyNISSAN connected vehicles. It provides a typed
+API for vehicle telemetry, charging, climate, remote commands, account data, and
+connected-service features.
 
 The client currently supports United States MyNISSAN accounts and includes Nissan Ariya
 telemetry and remote-control support.
@@ -20,9 +20,8 @@ telemetry and remote-control support.
 - Charging, climate, lock, light, horn, engine, location, and status-refresh commands.
 - Climate and charge schedules, vehicle capabilities, alerts, maintenance, and history.
 - Automatic access-token refresh with a callback for persisting replacement tokens.
-- Static or refreshable request proof for protected service operations.
+- Typed command requests with status polling and terminal results.
 - Read-only mode enabled by default for safe discovery and monitoring.
-- No dependency on Home Assistant.
 
 ## Installation
 
@@ -80,9 +79,8 @@ client = NissanClient(
 The client refreshes expired tokens before a request and publishes the replacement token set
 through `token_listener`.
 
-Protected operations accept a `RequestProof` value or an async `RequestProofProvider`. The
-provider is called with `False` for a current value and with `True` when the service rejects a
-stale value.
+The [authentication guide](docs/authentication.md) covers token reuse and request verification
+for applications that need those flows.
 
 ## Read-only safety
 
@@ -154,4 +152,7 @@ details. Development and release procedures are documented in
 [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/releasing.md](docs/releasing.md). Security issues
 should follow [SECURITY.md](SECURITY.md).
 
-`pynissan` is an independent community project and is not affiliated with Nissan.
+## Project status
+
+`pynissan` is maintained by the community and is not affiliated with, endorsed by, or
+supported by Nissan Motor Co., Ltd.

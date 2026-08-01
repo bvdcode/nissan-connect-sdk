@@ -1,4 +1,4 @@
-"""Parsing functions preserved from parsing.py."""
+"""Core vehicle response parsers."""
 
 from ._vehicle_alert_parsing import (
     parse_remote_service_history,

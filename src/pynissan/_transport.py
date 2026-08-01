@@ -163,7 +163,7 @@ class _NissanTransport:
         document: str,
         variables: Mapping[str, object],
     ) -> Mapping[str, object]:
-        """Execute one protected operation before account authentication."""
+        """Execute one request requiring proof before account authentication."""
 
         request_proof = await self._async_get_request_proof(force_refresh=False)
         if request_proof is None:

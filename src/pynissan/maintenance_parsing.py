@@ -1,4 +1,4 @@
-"""Parsing functions preserved from maintenance_parsing.py."""
+"""Maintenance and service reminder response parsers."""
 
 from ._maintenance_public_parsing import (
     parse_add_past_service,

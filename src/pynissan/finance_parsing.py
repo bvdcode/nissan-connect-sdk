@@ -1,4 +1,4 @@
-"""Parsing functions preserved from finance_parsing.py."""
+"""Finance response parsers."""
 
 from ._finance_public_parsing import (
     parse_account_statement_pdf,

@@ -1,4 +1,4 @@
-"""Parsing functions preserved from navigation_parsing.py."""
+"""Navigation response parsers."""
 
 from ._navigation_public_parsing import (
     parse_t_junction_locations,

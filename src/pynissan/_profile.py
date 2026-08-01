@@ -75,7 +75,7 @@ _US_PROFILE = _CountryProfile(
 
 
 def profile_for(country: Country) -> _CountryProfile:
-    """Return the internal service profile for a supported country."""
+    """Return the service profile for a supported country."""
 
     match country:
         case Country.US:

@@ -1,4 +1,4 @@
-"""Parsing functions preserved from commerce_parsing.py."""
+"""Commerce response parsers."""
 
 from ._commerce_public_parsing import (
     parse_add_product_to_cart,

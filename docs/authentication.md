@@ -35,10 +35,10 @@ Persist `client.oauth_device_id` with the account record so a later client insta
 the same OAuth device identity. Treat credentials, tokens, and the device identifier as
 sensitive application data. Do not log or commit them.
 
-## Protected requests
+## Request verification
 
-Account onboarding and some connected-service operations require current request proof.
-Supply either a static pair or an async provider when constructing the client.
+Some account onboarding and connected-service operations require request proof. Supply either
+a static pair or an async provider when constructing the client.
 
 ```python
 from pynissan import NissanClient, RequestProof
