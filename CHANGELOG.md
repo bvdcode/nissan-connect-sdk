@@ -6,6 +6,14 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 <!-- version list -->
 
+## v0.1.1 (2026-08-01)
+
+### Bug Fixes
+
+- Focus package description on client capabilities
+  ([`003a2f9`](https://github.com/bvdcode/nissan-connect-sdk/commit/003a2f93d5966b8d8e306841a4524572517f24c4))
+
+
 ## v0.1.0 (2026-08-01)
 
 ### Bug Fixes
