@@ -9,6 +9,7 @@ description = "Independent async Python client for MyNISSAN connected vehicles"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
   { name = "Vadim Belov" },
 ]
@@ -23,6 +24,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Home Automation",
   "Typing :: Typed",
 ]
@@ -60,7 +62,7 @@ testpaths = ["tests"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-packages = ["pynissan"]
+files = ["src/pynissan", "scripts"]
 
 [tool.ruff]
 line-length = 100

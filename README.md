@@ -1,6 +1,7 @@
 # pynissan
 
 [![CI](https://github.com/bvdcode/nissan-connect-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/bvdcode/nissan-connect-sdk/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/pynissan.svg)](https://pypi.org/project/pynissan/)
 [![Python](https://img.shields.io/pypi/pyversions/pynissan.svg)](https://pypi.org/project/pynissan/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 

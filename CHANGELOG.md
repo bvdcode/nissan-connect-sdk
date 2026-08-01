@@ -14,6 +14,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 - Added remote climate, charging, lock, horn, lights, engine, and refresh commands.
 - Added read-only mode as the default client policy.
 - Added United States account support and Nissan Ariya vehicle support.
+- Added an automated, attested PyPI and GitHub release process.
 
 [Unreleased]: https://github.com/bvdcode/nissan-connect-sdk/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/bvdcode/nissan-connect-sdk/releases/tag/v0.1.0
