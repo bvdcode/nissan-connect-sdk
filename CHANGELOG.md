@@ -6,6 +6,10 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Added application authentication and request-proof support for protected onboarding flows.
+- Split service clients, models, parsers, and tests into focused modules.
+- Added a CI-enforced 500-line limit for handwritten Python modules.
+
 ## [0.1.0] - 2026-07-31
 
 - Added async authentication, token refresh, and reusable token persistence.

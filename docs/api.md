@@ -1,8 +1,8 @@
 # API guide
 
-The package exports `NissanClient`, `Country`, `Tokens`, domain models, input models, enums,
-and exceptions from the `pynissan` namespace. Public objects include precise type hints and
-runtime docstrings.
+The package exports `NissanClient`, `Country`, `Tokens`, `RequestProof`,
+`RequestProofProvider`, domain models, input models, enums, and exceptions from the
+`pynissan` namespace. Public objects include precise type hints and runtime docstrings.
 
 ## Client lifecycle
 
@@ -55,6 +55,8 @@ State-changing methods require `read_only=False` when constructing the client.
 | `async_refresh_vehicle_status()` | Vehicle status refresh |
 
 Vehicle capabilities and account subscriptions determine whether a command is available.
+Protected operations also use the request proof configured on the client when the service
+requires it.
 Most commands return a `ServiceRequest`; pass it to `async_wait_for_service_request()` to wait
 for a terminal result.
 

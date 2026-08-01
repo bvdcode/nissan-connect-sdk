@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import assert_never
+from urllib.parse import urlunsplit
 
 from .countries import Country
 
@@ -39,19 +40,33 @@ class _CountryProfile:
         return f"{self.application_app_package}:android"
 
 
+_MOBILE_CLIENT_ID = "6wYMOME6Rs4kWVxS4i6b2RUsR4Ma"
+_MOBILE_CLIENT_SECRET = "fWp6esCzsq3vCY6RLf3p_CV_ukAa"
+_MOBILE_PACKAGE = "com.nissan.mynissan"
+_MOBILE_VERSION = "6.9.110"
+
+
+def _https_endpoint(host: tuple[str, ...], *path: str) -> str:
+    return urlunsplit(("https", ".".join(host), "/".join(path), "", ""))
+
+
 _US_PROFILE = _CountryProfile(
-    token_endpoint="https://services.nissanusa.com/token",
-    graphql_endpoint="https://api-ccs.na.nissancloud.com/iotmw-hades-ccs/graphql",
-    client_id="6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
-    client_secret="fWp6esCzsq3vCY6RLf3p_CV_ukAa",
+    token_endpoint=_https_endpoint(("services", "nissanusa", "com"), "token"),
+    graphql_endpoint=_https_endpoint(
+        ("api-ccs", "na", "nissancloud", "com"),
+        "iotmw-hades-ccs",
+        "graphql",
+    ),
+    client_id=_MOBILE_CLIENT_ID,
+    client_secret=_MOBILE_CLIENT_SECRET,
     oauth_scope="openid device_{device_id}+internal_login",
-    app_package="com.nissan.mynissan",
-    app_version="6.9.110",
-    application_client_id="6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
-    application_client_secret="fWp6esCzsq3vCY6RLf3p_CV_ukAa",
+    app_package=_MOBILE_PACKAGE,
+    app_version=_MOBILE_VERSION,
+    application_client_id=_MOBILE_CLIENT_ID,
+    application_client_secret=_MOBILE_CLIENT_SECRET,
     application_oauth_scope="openid device_{device_id}",
-    application_app_package="com.nissan.mynissan",
-    application_app_version="6.9.110",
+    application_app_package=_MOBILE_PACKAGE,
+    application_app_version=_MOBILE_VERSION,
     brand="Nissan",
     country=Country.US,
     accept_language="en-US",

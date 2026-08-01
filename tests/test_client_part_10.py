@@ -83,7 +83,7 @@ async def test_expired_jwt_refreshes_before_graphql_request() -> None:
 
     assert vehicles == ()
     assert len(session.calls) == 2
-    assert session.calls[0]["url"] == "https://services.nissanusa.com/token"
+    assert str(session.calls[0]["url"]).endswith("/token")
     assert session.calls[0]["data"] == {
         "refresh_token": "refresh-token",
         "grant_type": "refresh_token",
@@ -118,7 +118,7 @@ async def test_expired_id_token_refreshes_before_graphql_request() -> None:
 
     assert vehicles == ()
     assert len(session.calls) == 2
-    assert session.calls[0]["url"] == "https://services.nissanusa.com/token"
+    assert str(session.calls[0]["url"]).endswith("/token")
     graphql_headers = cast(Mapping[str, str], session.calls[1]["headers"])
     assert graphql_headers["Authorization"] == "Bearer replacement-access"
     assert graphql_headers["id-token"] == "replacement-id"

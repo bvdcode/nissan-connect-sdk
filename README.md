@@ -20,6 +20,7 @@ telemetry and remote-control support.
 - Charging, climate, lock, light, horn, engine, location, and status-refresh commands.
 - Climate and charge schedules, vehicle capabilities, alerts, maintenance, and history.
 - Automatic access-token refresh with a callback for persisting replacement tokens.
+- Static or refreshable request proof for protected service operations.
 - Read-only mode enabled by default for safe discovery and monitoring.
 - No dependency on Home Assistant.
 
@@ -78,6 +79,10 @@ client = NissanClient(
 
 The client refreshes expired tokens before a request and publishes the replacement token set
 through `token_listener`.
+
+Protected operations accept a `RequestProof` value or an async `RequestProofProvider`. The
+provider is called with `False` for a current value and with `True` when the service rejects a
+stale value.
 
 ## Read-only safety
 
