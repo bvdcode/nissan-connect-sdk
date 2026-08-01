@@ -1,0 +1,44 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pynissan
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: python -m pip install build twine
+      - name: Verify release version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          version = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+          tag = os.environ["RELEASE_TAG"].removeprefix("v")
+          if tag != version:
+              raise SystemExit(f"release tag {tag!r} does not match package version {version!r}")
+          PY
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
