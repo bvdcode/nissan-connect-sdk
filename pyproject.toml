@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pynissan"
+version = "0.1.0"
+description = "Independent async Python client for MyNISSAN connected vehicles"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+  { name = "Vadim Belov" },
+]
+keywords = ["ariya", "asyncio", "connected-car", "home-assistant", "nissan"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Home Automation",
+  "Typing :: Typed",
+]
+dependencies = [
+  "aiohttp>=3.12,<4",
+]
+
+[project.urls]
+Changelog = "https://github.com/bvdcode/nissan-connect-sdk/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/bvdcode/nissan-connect-sdk/tree/main/docs"
+Issues = "https://github.com/bvdcode/nissan-connect-sdk/issues"
+Repository = "https://github.com/bvdcode/nissan-connect-sdk"
+
+[project.optional-dependencies]
+test = [
+  "build>=1.5,<2",
+  "mypy>=2.3,<3",
+  "pytest>=9.1,<10",
+  "pytest-asyncio>=1.4,<2",
+  "ruff>=0.16,<0.17",
+  "twine>=6.2,<7",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pynissan = ["py.typed"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["pynissan"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "RUF"]
