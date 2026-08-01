@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pynissan"
-version = "0.0.0"
+version = "0.1.0"
 description = "Independent async Python client for MyNISSAN connected vehicles"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -76,7 +76,7 @@ select = ["E", "F", "I", "UP", "B", "ASYNC", "RUF"]
 allow_zero_version = true
 major_on_zero = false
 version_toml = ["pyproject.toml:project.version"]
-build_command = "python -m build"
+build_command = "python -m pip install 'build>=1.5,<2' && python -m build"
 commit_message = "chore(release): {version}"
 
 [tool.semantic_release.commit_parser_options]
