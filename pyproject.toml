@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pynissan"
-version = "0.1.0"
+version = "0.0.0"
 description = "Independent async Python client for MyNISSAN connected vehicles"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -42,6 +42,7 @@ Repository = "https://github.com/bvdcode/nissan-connect-sdk"
 test = [
   "build>=1.5,<2",
   "mypy>=2.3,<3",
+  "python-semantic-release>=10.6,<11",
   "pytest>=9.1,<10",
   "pytest-asyncio>=1.4,<2",
   "ruff>=0.16,<0.17",
@@ -70,3 +71,23 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC", "RUF"]
+
+[tool.semantic_release]
+allow_zero_version = true
+major_on_zero = false
+version_toml = ["pyproject.toml:project.version"]
+build_command = "python -m build"
+commit_message = "chore(release): {version}"
+
+[tool.semantic_release.commit_parser_options]
+parse_squash_commits = true
+ignore_merge_commits = true
+
+[tool.semantic_release.changelog]
+mode = "update"
+insertion_flag = "<!-- version list -->"
+exclude_commit_patterns = ["^Initial commit$"]
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+mask_initial_release = false

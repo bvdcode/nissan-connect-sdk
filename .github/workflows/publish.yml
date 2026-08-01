@@ -2,8 +2,7 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches: [main]
 
 permissions:
   contents: read
@@ -13,11 +12,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Validate and build
+  release:
+    name: Version and build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      released: ${{ steps.release.outputs.released || 'false' }}
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - run: git reset --hard "${{ github.sha }}"
       - uses: actions/setup-python@v7
         with:
           python-version: "3.14"
@@ -26,17 +36,27 @@ jobs:
       - run: python -m ruff check .
       - run: python -m ruff format --check .
       - run: python -m mypy
+      - run: python scripts/check_file_size.py
       - run: python -m pytest
+      - name: Create semantic version
+        id: release
+        uses: python-semantic-release/python-semantic-release@v10.6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_committer_name: github-actions[bot]
+          git_committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+          vcs_release: "false"
       - name: Prepare release notes
+        if: steps.release.outputs.released == 'true'
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: >-
-          python scripts/release_notes.py
-          --tag "$RELEASE_TAG"
-          --output release-notes.md
-      - run: python -m build
-      - run: python -m twine check dist/*
-      - uses: actions/upload-artifact@v7
+          RELEASE_NOTES: ${{ steps.release.outputs.release_notes }}
+        run: printf '%s\n' "$RELEASE_NOTES" > release-notes.md
+      - name: Validate distributions
+        if: steps.release.outputs.released == 'true'
+        run: python -m twine check dist/*
+      - name: Upload release artifacts
+        if: steps.release.outputs.released == 'true'
+        uses: actions/upload-artifact@v7
         with:
           name: release-artifacts
           path: |
@@ -47,22 +67,26 @@ jobs:
 
   publish:
     name: Upload to PyPI
-    needs: build
+    needs: release
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/pynissan
     permissions:
+      contents: read
       id-token: write
     steps:
       - uses: actions/download-artifact@v8
         with:
           name: release-artifacts
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
 
   github-release:
     name: Publish GitHub release
-    needs: [build, publish]
+    needs: [release, publish]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -73,11 +97,11 @@ jobs:
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: |
-          version="${RELEASE_TAG#v}"
-          gh release create "$RELEASE_TAG" dist/* \
-            --repo "$GITHUB_REPOSITORY" \
-            --verify-tag \
-            --title "pynissan $version" \
-            --notes-file release-notes.md
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+          RELEASE_VERSION: ${{ needs.release.outputs.version }}
+        run: >-
+          gh release create "$RELEASE_TAG" dist/*
+          --repo "$GITHUB_REPOSITORY"
+          --verify-tag
+          --title "pynissan $RELEASE_VERSION"
+          --notes-file release-notes.md
