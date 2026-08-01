@@ -2769,7 +2769,7 @@ async def test_wait_for_service_request_checks_immediately_and_sleeps_between_ch
         sleep_calls.append(delay)
         assert len(session.calls) == len(sleep_calls)
 
-    monkeypatch.setattr("pynissan.client.asyncio.sleep", fake_sleep)
+    monkeypatch.setattr("pynissan._client_base.asyncio.sleep", fake_sleep)
 
     result = await client.async_wait_for_service_request(
         "JN1TESTVIN",
@@ -2796,7 +2796,7 @@ async def test_wait_for_service_request_returns_terminal_failure_without_sleep(
     async def fail_if_called(delay: float) -> None:
         raise AssertionError(f"unexpected sleep for {delay} seconds")
 
-    monkeypatch.setattr("pynissan.client.asyncio.sleep", fail_if_called)
+    monkeypatch.setattr("pynissan._client_base.asyncio.sleep", fail_if_called)
 
     result = await client.async_wait_for_service_request(
         "JN1TESTVIN",
@@ -2829,7 +2829,7 @@ async def test_route_waiter_continues_through_unknown_status(
     async def fake_sleep(delay: float) -> None:
         sleep_calls.append(delay)
 
-    monkeypatch.setattr("pynissan.client.asyncio.sleep", fake_sleep)
+    monkeypatch.setattr("pynissan._client_base.asyncio.sleep", fake_sleep)
 
     result = await client.async_wait_for_service_request(
         "JN1TESTVIN",
