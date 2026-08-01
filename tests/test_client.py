@@ -2646,18 +2646,6 @@ async def test_request_status_check_is_allowed_in_read_only_mode() -> None:
 
 
 def test_service_request_result_status_properties_cover_all_known_statuses() -> None:
-    in_progress = {
-        ServiceRequestStatus.INITIATED,
-        ServiceRequestStatus.PENDING,
-        ServiceRequestStatus.SCHEDULED,
-        ServiceRequestStatus.SENT,
-        ServiceRequestStatus.CANCELLATION_INITIATED,
-        ServiceRequestStatus.CANCELLATION_SENT,
-        ServiceRequestStatus.CANCEL_UPDATE_INITIATED,
-        ServiceRequestStatus.CANCEL_UPDATE_SENT,
-        ServiceRequestStatus.UPDATE_INITIATED,
-        ServiceRequestStatus.UPDATE_SENT,
-    }
     successful = {
         ServiceRequestStatus.SUCCESS,
         ServiceRequestStatus.SUCCESS_EXECUTION_CONFIRMED,
@@ -2665,11 +2653,17 @@ def test_service_request_result_status_properties_cover_all_known_statuses() -> 
         ServiceRequestStatus.CANCEL_UPDATE_SUCCESS,
         ServiceRequestStatus.UPDATE_SUCCESS,
     }
+    failed = {
+        ServiceRequestStatus.FAILED,
+        ServiceRequestStatus.CANCELLATION_FAILED,
+        ServiceRequestStatus.CANCEL_UPDATE_FAILED,
+        ServiceRequestStatus.UPDATE_FAILED,
+    }
 
     for status in ServiceRequestStatus:
         result = ServiceRequestResult(status)
 
-        assert result.is_terminal is (status not in in_progress)
+        assert result.is_terminal is (status in successful | failed)
         assert result.is_success is (status in successful)
 
     pending_without_status = ServiceRequestResult(None)

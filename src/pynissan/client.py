@@ -4,6 +4,7 @@ import asyncio
 import math
 from collections.abc import Mapping
 from datetime import date, datetime
+from enum import StrEnum
 from typing import assert_never
 
 from aiohttp import ClientSession
@@ -438,7 +439,7 @@ from .garage_parsing import (
     parse_update_vehicle_nickname,
     parse_upload_ownership_verification,
 )
-from .graphql_input import UNSET, UnsetType, optional_input_fields
+from .graphql_input import UNSET, UnsetType, optional_input_fields, serialize_enum
 from .insurance_inputs import VehicleInsuranceInput, vehicle_insurance_variables
 from .insurance_models import (
     VehicleInsurance,
@@ -2523,8 +2524,8 @@ class NissanClient:
             operations.VEHICLE_DYNAMIC_DATA,
             {
                 "vin": vin,
-                "unit": distance_unit.value,
-                "temperatureUnit": temperature_unit.value,
+                "unit": serialize_enum(distance_unit),
+                "temperatureUnit": serialize_enum(temperature_unit),
             },
         )
         return parse_vehicle_status(data, vin)
@@ -3602,7 +3603,7 @@ class NissanClient:
         data = await self._transport.async_graphql(
             "VehicleCapabilities",
             operations.VEHICLE_CAPABILITIES,
-            {"vin": vin, "unit": temperature_unit.value},
+            {"vin": vin, "unit": serialize_enum(temperature_unit)},
         )
         return parse_vehicle_capabilities(data, vin)
 
@@ -3646,7 +3647,7 @@ class NissanClient:
         data = await self._transport.async_graphql(
             "VehicleChargeHistory",
             operations.VEHICLE_CHARGE_HISTORY,
-            {"vin": vin, "aggregator": aggregator.value},
+            {"vin": vin, "aggregator": serialize_enum(aggregator)},
         )
         return parse_vehicle_charge_history(data)
 
@@ -4066,7 +4067,7 @@ class NissanClient:
         data = await self._transport.async_graphql(
             "VehicleClimateSchedules",
             operations.VEHICLE_CLIMATE_SCHEDULES,
-            {"vin": vin, "temperatureUnit": temperature_unit.value},
+            {"vin": vin, "temperatureUnit": serialize_enum(temperature_unit)},
         )
         return parse_climate_schedules(data)
 
@@ -4081,7 +4082,7 @@ class NissanClient:
         data = await self._transport.async_graphql(
             "VehicleClimateDefaults",
             operations.VEHICLE_CLIMATE_DEFAULTS,
-            {"vin": vin, "temperatureUnit": temperature_unit.value},
+            {"vin": vin, "temperatureUnit": serialize_enum(temperature_unit)},
         )
         return parse_climate_defaults(data)
 
@@ -5355,13 +5356,13 @@ class NissanClient:
 
 def _start_climate_input(climate: ClimateSettings) -> dict[str, object]:
     return {
-        "unit": climate.unit.value,
+        "unit": serialize_enum(climate.unit),
         "temperatureValue": climate.temperature,
     }
 
 
 def _temperature_input(climate: ClimateSettings) -> dict[str, object]:
-    return {"value": climate.temperature, "unit": climate.unit.value}
+    return {"value": climate.temperature, "unit": serialize_enum(climate.unit)}
 
 
 def _climate_parameters_input(parameters: ClimateParameters | None) -> dict[str, object] | None:
@@ -5390,14 +5391,14 @@ def _charge_schedule_input(schedule: ChargeScheduleInput) -> dict[str, object]:
     return {
         "startDateTime": _date_time_input(schedule.start_date_time),
         "duration": schedule.duration,
-        "weekDays": [day.value for day in schedule.week_days],
+        "weekDays": [serialize_enum(day) for day in schedule.week_days],
     }
 
 
 def _climate_schedule_input(schedule: ClimateScheduleInput) -> dict[str, object]:
     return {
         "startDateTime": _date_time_input(schedule.start_date_time),
-        "weekDays": [day.value for day in schedule.week_days],
+        "weekDays": [serialize_enum(day) for day in schedule.week_days],
         "temperature": _temperature_input(schedule.climate),
     }
 
@@ -5408,9 +5409,8 @@ def _date_time_input(value: datetime) -> str:
     return value.isoformat()
 
 
-def _enum_value(value: object) -> str | None:
-    enum_value = getattr(value, "value", None)
-    return enum_value if isinstance(enum_value, str) else None
+def _enum_value(value: StrEnum | None) -> str | None:
+    return serialize_enum(value) if value is not None else None
 
 
 def _on_off(value: bool | None) -> str | None:
@@ -5467,7 +5467,7 @@ def _navigation_headers(
 ) -> Mapping[str, str] | None:
     if data_source is None:
         return None
-    return {"x-tsp-datasource": data_source.value}
+    return {"x-tsp-datasource": serialize_enum(data_source)}
 
 
 def _is_terminal_service_request(

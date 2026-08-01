@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 
-from .graphql_input import UNSET, UnsetType, optional_input_fields
+from .graphql_input import UNSET, UnsetType, optional_input_fields, serialize_enum
 
 
 class V1GNotificationCategory(StrEnum):
@@ -92,7 +92,7 @@ def v1g_notification_preference_input(
 
 def _notification_category_input(value: str) -> str:
     if isinstance(value, V1GNotificationCategory):
-        return value.value
+        return serialize_enum(value)
     return value
 
 

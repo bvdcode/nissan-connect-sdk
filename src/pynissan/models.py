@@ -137,21 +137,6 @@ class ServiceRequestStatus(StrEnum):
     UNKNOWN_VALUE = "UNKNOWN__"
 
 
-_IN_PROGRESS_SERVICE_REQUEST_STATUSES: frozenset[ServiceRequestStatus] = frozenset(
-    {
-        ServiceRequestStatus.INITIATED,
-        ServiceRequestStatus.PENDING,
-        ServiceRequestStatus.SCHEDULED,
-        ServiceRequestStatus.SENT,
-        ServiceRequestStatus.CANCELLATION_INITIATED,
-        ServiceRequestStatus.CANCELLATION_SENT,
-        ServiceRequestStatus.CANCEL_UPDATE_INITIATED,
-        ServiceRequestStatus.CANCEL_UPDATE_SENT,
-        ServiceRequestStatus.UPDATE_INITIATED,
-        ServiceRequestStatus.UPDATE_SENT,
-    }
-)
-
 _SUCCESSFUL_SERVICE_REQUEST_STATUSES: frozenset[ServiceRequestStatus] = frozenset(
     {
         ServiceRequestStatus.SUCCESS,
@@ -159,6 +144,16 @@ _SUCCESSFUL_SERVICE_REQUEST_STATUSES: frozenset[ServiceRequestStatus] = frozense
         ServiceRequestStatus.CANCELLATION_SUCCESS,
         ServiceRequestStatus.CANCEL_UPDATE_SUCCESS,
         ServiceRequestStatus.UPDATE_SUCCESS,
+    }
+)
+
+_TERMINAL_SERVICE_REQUEST_STATUSES: frozenset[ServiceRequestStatus] = frozenset(
+    {
+        *_SUCCESSFUL_SERVICE_REQUEST_STATUSES,
+        ServiceRequestStatus.FAILED,
+        ServiceRequestStatus.CANCELLATION_FAILED,
+        ServiceRequestStatus.CANCEL_UPDATE_FAILED,
+        ServiceRequestStatus.UPDATE_FAILED,
     }
 )
 
@@ -281,7 +276,7 @@ class ServiceRequestResult:
     def is_terminal(self) -> bool:
         """Return whether Nissan has finished processing the request."""
 
-        return self.status is not None and self.status not in _IN_PROGRESS_SERVICE_REQUEST_STATUSES
+        return self.status in _TERMINAL_SERVICE_REQUEST_STATUSES
 
     @property
     def is_success(self) -> bool:

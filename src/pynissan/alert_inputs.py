@@ -6,7 +6,13 @@ from datetime import datetime
 from enum import StrEnum
 
 from .common_inputs import AddressInput, CoordinateInput, address_input, coordinate_input
-from .graphql_input import UNSET, UnsetType, optional_input_fields, serialize_datetime
+from .graphql_input import (
+    UNSET,
+    UnsetType,
+    optional_input_fields,
+    serialize_datetime,
+    serialize_enum,
+)
 from .models import DistanceUnit, SpeedUnit, WeekDay
 
 
@@ -99,7 +105,7 @@ def boundary_alert_input(value: BoundaryAlertInput) -> dict[str, object]:
         "address": address_input(value.address),
         "radius": radius_input(value.radius),
         "inVehicleWarning": value.in_vehicle_warning,
-        "alertType": value.alert_type.value,
+        "alertType": serialize_enum(value.alert_type),
     }
 
 
@@ -125,7 +131,7 @@ def curfew_alert_input(value: CurfewAlertInput) -> dict[str, object]:
         "schedule": {
             "startDateTime": serialize_datetime(value.schedule.start_date_time),
             "duration": value.schedule.duration,
-            "weekDays": [day.value for day in value.schedule.week_days],
+            "weekDays": [serialize_enum(day) for day in value.schedule.week_days],
         },
     }
 
@@ -139,7 +145,7 @@ def speed_alert_input(value: SpeedAlertInput) -> dict[str, object]:
 
 
 def radius_input(value: AlertRadiusInput) -> dict[str, object]:
-    return {"value": value.value, "unit": value.unit.value}
+    return {"value": value.value, "unit": serialize_enum(value.unit)}
 
 
 def valet_radius_input(value: ValetRadiusInput) -> dict[str, object]:
@@ -162,7 +168,7 @@ def optional_valet_radius_input(
 
 
 def alert_speed_input(value: AlertSpeedInput) -> dict[str, object]:
-    return {"type": value.unit.value, "value": value.value}
+    return {"type": serialize_enum(value.unit), "value": value.value}
 
 
 def _optional_serialized[InputT](
@@ -176,5 +182,5 @@ def _optional_serialized[InputT](
 
 def _optional_enum(value: StrEnum | UnsetType | None) -> str | UnsetType | None:
     if isinstance(value, StrEnum):
-        return value.value
+        return serialize_enum(value)
     return value
