@@ -25,6 +25,7 @@ jobs:
       - run: python -m ruff check .
       - run: python -m ruff format --check .
       - run: python -m mypy
+      - run: python scripts/check_file_size.py
 
   test:
     runs-on: ubuntu-latest

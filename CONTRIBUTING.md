@@ -16,6 +16,7 @@ Run the complete quality gate before opening a pull request:
 python -m ruff check .
 python -m ruff format --check .
 python -m mypy
+python scripts/check_file_size.py
 python -m pytest
 python -m build
 ```
@@ -28,6 +29,11 @@ python -m build
 - Preserve nullable fields and unknown upstream values instead of inventing defaults.
 - Add focused tests for request variables, response parsing, errors, and read-only behavior.
 - Keep state-changing operations behind the client's read-only guard.
+- Keep handwritten Python files at or below 500 non-empty, non-comment lines. Prefer
+  300–400 lines and split by responsibility before reaching the hard limit.
+
+The only size-limit exceptions are the public export barrel in `src/pynissan/__init__.py`
+and the declarative GraphQL document catalog in `src/pynissan/operations.py`.
 
 ## Test data
 
