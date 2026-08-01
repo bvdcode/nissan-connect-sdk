@@ -5,13 +5,14 @@ import base64
 import inspect
 import json
 import time
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Mapping
 from typing import cast
 from uuid import uuid4
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from ._profile import _CountryProfile
+from .callbacks import TokenListener
 from .exceptions import (
     ApiError,
     AuthenticationError,
@@ -22,10 +23,9 @@ from .exceptions import (
 from .models import Tokens
 
 type JsonObject = dict[str, object]
-type TokenListener = Callable[[Tokens], Awaitable[None] | None]
 
 
-class NissanTransport:
+class _NissanTransport:
     """OAuth and GraphQL transport using a caller-owned aiohttp session."""
 
     def __init__(

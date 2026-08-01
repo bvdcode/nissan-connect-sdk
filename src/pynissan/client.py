@@ -10,6 +10,7 @@ from aiohttp import ClientSession
 
 from . import operations
 from ._profile import profile_for
+from ._transport import _NissanTransport
 from .account_enrollment_parsing import (
     parse_generate_otp,
     parse_ncar_icar_customer_enrollment,
@@ -80,6 +81,7 @@ from .alert_inputs import (
     optional_valet_radius_input,
     speed_alert_input,
 )
+from .callbacks import TokenListener
 from .charge_plan_inputs import (
     cancel_charge_plan_variables,
     charge_product_variables,
@@ -696,7 +698,6 @@ from .service_parsing import (
     parse_vehicle_service_history,
     parse_warranty_info,
 )
-from .transport import NissanTransport, TokenListener
 from .v1g_inputs import (
     V1GNotificationPreferenceInput,
     v1g_cancel_monitored_charging_plan_variables,
@@ -767,7 +768,7 @@ class NissanClient:
         read_only: bool = True,
         oauth_device_id: str | None = None,
     ) -> None:
-        self._transport = NissanTransport(
+        self._transport = _NissanTransport(
             session,
             profile=profile_for(country),
             tokens=tokens,
