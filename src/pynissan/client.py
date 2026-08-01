@@ -82,7 +82,7 @@ from .alert_inputs import (
     optional_valet_radius_input,
     speed_alert_input,
 )
-from .callbacks import TokenListener
+from .callbacks import RequestProofProvider, TokenListener
 from .charge_plan_inputs import (
     cancel_charge_plan_variables,
     charge_product_variables,
@@ -649,6 +649,7 @@ from .pnc_parsing import (
     parse_stop_charge_session,
     parse_update_pnc_service_status,
 )
+from .request_proof import RequestProof
 from .second_delivery_inputs import (
     SecondDeliveryAppointmentInput,
     second_delivery_appointment_variables,
@@ -768,6 +769,8 @@ class NissanClient:
         token_listener: TokenListener | None = None,
         read_only: bool = True,
         oauth_device_id: str | None = None,
+        request_proof: RequestProof | None = None,
+        request_proof_provider: RequestProofProvider | None = None,
     ) -> None:
         self._transport = _NissanTransport(
             session,
@@ -775,6 +778,8 @@ class NissanClient:
             tokens=tokens,
             token_listener=token_listener,
             oauth_device_id=oauth_device_id,
+            request_proof=request_proof,
+            request_proof_provider=request_proof_provider,
         )
         self._country = country
         self._read_only = read_only
@@ -819,7 +824,7 @@ class NissanClient:
     ) -> NissanIdValidationResult | None:
         """Return the account state associated with a Nissan ID."""
 
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "ValidateNissanID",
             operations.VALIDATE_NISSAN_ID,
             validate_nissan_id_variables(nissan_id),
@@ -877,7 +882,7 @@ class NissanClient:
         """Register a MyNISSAN account."""
 
         self._ensure_write_allowed()
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "RegisterAccount",
             operations.REGISTER_ACCOUNT,
             register_account_variables(config),
@@ -891,7 +896,7 @@ class NissanClient:
         """Register an account through the NCAR/ICAR flow."""
 
         self._ensure_write_allowed()
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "NcarIcarRegisterAccount",
             operations.NCAR_ICAR_REGISTER_ACCOUNT,
             register_account_variables(config),
@@ -905,7 +910,7 @@ class NissanClient:
         """Check account availability for an NCAR/ICAR enrollment."""
 
         self._ensure_write_allowed()
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "NcarIcarVerifyAccount",
             operations.NCAR_ICAR_VERIFY_ACCOUNT,
             ncar_icar_verify_account_variables(guid),
@@ -919,7 +924,7 @@ class NissanClient:
         """Recover customer details from an NCAR/ICAR enrollment link."""
 
         self._ensure_write_allowed()
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "NcarIcarCustomerEnrollment",
             operations.NCAR_ICAR_CUSTOMER_ENROLLMENT,
             ncar_icar_verify_account_variables(guid),
@@ -934,7 +939,7 @@ class NissanClient:
         """Generate a one-time password for NCAR/ICAR enrollment."""
 
         self._ensure_write_allowed()
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "NcarIcarGenerateOTP",
             operations.NCAR_ICAR_GENERATE_OTP,
             ncar_icar_generate_otp_variables(guid, phone_number),
@@ -951,7 +956,7 @@ class NissanClient:
         """Verify an NCAR/ICAR enrollment one-time password."""
 
         self._ensure_write_allowed()
-        data = await self._transport.async_graphql(
+        data = await self._transport.async_application_graphql(
             "NcarIcarVerifyOTP",
             operations.NCAR_ICAR_VERIFY_OTP,
             ncar_icar_verify_otp_variables(guid, phone_number, reference_id, otp),

@@ -27,6 +27,7 @@ from pynissan import (
     RegisterAccountDuplicateEmailError,
     RegisterAccountInput,
     RegisterAccountSuccess,
+    RequestProof,
     Tokens,
     UpdateAccountInput,
     UpdateAccountSuccess,
@@ -79,6 +80,12 @@ class FakeResponse:
         return self._payload
 
 
+class FakeApplicationTokenResponse(FakeResponse):
+    def __init__(self) -> None:
+        super().__init__("applicationToken")
+        self._payload = {"access_token": "application-access-token"}
+
+
 class FakeSession:
     def __init__(self, *responses: FakeResponse) -> None:
         self.responses = list(responses)
@@ -123,14 +130,16 @@ def client(session: FakeSession, *, read_only: bool) -> NissanClient:
         cast(ClientSession, session),
         tokens=Tokens("access-token", "refresh-token", "id-token"),
         read_only=read_only,
+        request_proof=RequestProof("api-attestation", "device-status"),
     )
 
 
 def payloads(session: FakeSession) -> list[Mapping[str, object]]:
     values: list[Mapping[str, object]] = []
     for call in session.calls:
-        value = call["json"]
-        assert isinstance(value, Mapping)
+        value = call.get("json")
+        if not isinstance(value, Mapping):
+            continue
         values.append(value)
     return values
 
@@ -289,6 +298,7 @@ def test_update_and_delete_account_parsers_preserve_exact_output_shapes() -> Non
 
 async def test_account_client_wires_every_operation() -> None:
     session = FakeSession(
+        FakeApplicationTokenResponse(),
         FakeResponse("validateNissanID"),
         FakeResponse("securityQuestions"),
         FakeResponse("user"),
@@ -343,6 +353,13 @@ async def test_account_client_wires_every_operation() -> None:
     assert await sdk.async_update_nna_marketing_preferences(nna) is None
 
     requests = payloads(session)
+    application_token_call = session.calls[0]
+    assert application_token_call["data"] == {
+        "client_id": "6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
+        "client_secret": "fWp6esCzsq3vCY6RLf3p_CV_ukAa",
+        "scope": "openid device_" + sdk.oauth_device_id,
+        "grant_type": "client_credentials",
+    }
     assert [request["operationName"] for request in requests] == [
         "ValidateNissanID",
         "SecurityQuestions",

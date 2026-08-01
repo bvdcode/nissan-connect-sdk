@@ -15,6 +15,11 @@ class _CountryProfile:
     oauth_scope: str
     app_package: str
     app_version: str
+    application_client_id: str
+    application_client_secret: str
+    application_oauth_scope: str
+    application_app_package: str
+    application_app_version: str
     brand: str
     country: Country
     accept_language: str
@@ -27,15 +32,26 @@ class _CountryProfile:
 
         return f"{self.app_package}:android"
 
+    @property
+    def application_apollo_client_name(self) -> str:
+        """Return the Apollo identifier used before account authentication."""
+
+        return f"{self.application_app_package}:android"
+
 
 _US_PROFILE = _CountryProfile(
     token_endpoint="https://services.nissanusa.com/token",
     graphql_endpoint="https://api-ccs.na.nissancloud.com/iotmw-hades-ccs/graphql",
-    client_id="v9no_nW7GqHYsfAKkki6_N5AFVIa",
-    client_secret="Ynn56ncVx0yVffnDHIIMTWVYiuAa",
+    client_id="6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
+    client_secret="fWp6esCzsq3vCY6RLf3p_CV_ukAa",
     oauth_scope="openid device_{device_id}+internal_login",
-    app_package="ca.nissan.nissanconnectservices",
-    app_version="9.9.91",
+    app_package="com.nissan.mynissan",
+    app_version="6.9.110",
+    application_client_id="6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
+    application_client_secret="fWp6esCzsq3vCY6RLf3p_CV_ukAa",
+    application_oauth_scope="openid device_{device_id}",
+    application_app_package="com.nissan.mynissan",
+    application_app_version="6.9.110",
     brand="Nissan",
     country=Country.US,
     accept_language="en-US",

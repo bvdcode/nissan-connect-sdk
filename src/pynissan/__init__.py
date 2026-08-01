@@ -89,7 +89,7 @@ from .alert_inputs import (
     SpeedAlertInput,
     ValetRadiusInput,
 )
-from .callbacks import TokenListener
+from .callbacks import RequestProofProvider, TokenListener
 from .charge_plan_models import (
     ChargePlanAccountStatus,
     ChargePlanCancellationOutcome,
@@ -657,6 +657,7 @@ from .pnc_models import (
     PublicChargeSessionStopOutcome,
     PublicChargeSessionStopResult,
 )
+from .request_proof import RequestProof
 from .second_delivery_inputs import (
     SecondDeliveryAppointmentInput,
     SecondDeliveryAppointmentMode,
@@ -1166,6 +1167,8 @@ __all__ = [
     "ReminderNotificationsAfterLeavingVehicle",
     "RemoteServiceHistory",
     "RemoteServiceHistoryEntry",
+    "RequestProof",
+    "RequestProofProvider",
     "RequireOwnershipVerification",
     "ResetPartsReminderInput",
     "ResponseError",

@@ -16,6 +16,7 @@ from pynissan import (
     AlertRadiusInput,
     AlertScheduleInput,
     AlertSpeedInput,
+    AuthenticationError,
     BoundaryAlertInput,
     BoundaryAlertType,
     BoundaryAlertUpdate,
@@ -78,6 +79,7 @@ from pynissan import (
     RecalculatedWaypointType,
     ReminderNotificationsAfterLeavingVehicle,
     RemoteServiceHistory,
+    RequestProof,
     ResponseError,
     RouteCalculationCondition,
     RouteChargingTimeInput,
@@ -192,6 +194,86 @@ def make_client(
         read_only=read_only,
         tokens=tokens,
     )
+
+
+def test_request_proof_and_provider_are_mutually_exclusive() -> None:
+    async def provider(force_refresh: bool) -> RequestProof:
+        return RequestProof("provided-attestation", str(force_refresh))
+
+    with pytest.raises(ValueError, match="cannot be combined"):
+        NissanClient(
+            cast(ClientSession, FakeSession()),
+            request_proof=RequestProof("static-attestation", "device-status"),
+            request_proof_provider=provider,
+        )
+
+
+@pytest.mark.asyncio
+async def test_application_graphql_uses_application_token_and_request_proof() -> None:
+    session = FakeSession(
+        FakeResponse(200, {"access_token": "application-access"}),
+        FakeResponse(200, {"data": {"validateNissanID": None}}),
+    )
+    client = NissanClient(
+        cast(ClientSession, session),
+        oauth_device_id="device-123",
+        request_proof=RequestProof("api-attestation", "device-status"),
+    )
+
+    assert await client.async_validate_nissan_id("owner@example.test") is None
+
+    token_call, graphql_call = session.calls
+    assert token_call["data"] == {
+        "client_id": "6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
+        "client_secret": "fWp6esCzsq3vCY6RLf3p_CV_ukAa",
+        "scope": "openid device_device-123",
+        "grant_type": "client_credentials",
+    }
+    headers = cast(Mapping[str, str], graphql_call["headers"])
+    assert headers["Authorization"] == "Bearer application-access"
+    assert headers["X-API-Attestation"] == "api-attestation"
+    assert headers["X-Device-Status"] == "device-status"
+    assert headers["apollographql-client-name"] == "com.nissan.mynissan:android"
+    assert headers["apollographql-client-version"] == "6.9.110"
+    assert "id-token" not in headers
+
+
+@pytest.mark.asyncio
+async def test_application_graphql_requires_request_proof_before_network() -> None:
+    session = FakeSession()
+    client = NissanClient(cast(ClientSession, session))
+
+    with pytest.raises(AuthenticationError, match="requires request proof"):
+        await client.async_validate_nissan_id("owner@example.test")
+
+    assert session.calls == []
+
+
+@pytest.mark.asyncio
+async def test_rejected_request_proof_is_refreshed_once() -> None:
+    requests: list[bool] = []
+
+    async def provider(force_refresh: bool) -> RequestProof:
+        requests.append(force_refresh)
+        suffix = "fresh" if force_refresh else "initial"
+        return RequestProof(f"attestation-{suffix}", f"status-{suffix}")
+
+    session = FakeSession(
+        FakeResponse(200, {"access_token": "application-access"}),
+        FakeResponse(403, {"message": "request rejected"}),
+        FakeResponse(200, {"data": {"validateNissanID": None}}),
+    )
+    client = NissanClient(
+        cast(ClientSession, session),
+        request_proof_provider=provider,
+    )
+
+    assert await client.async_validate_nissan_id("owner@example.test") is None
+
+    assert requests == [False, True]
+    retry_headers = cast(Mapping[str, str], session.calls[2]["headers"])
+    assert retry_headers["X-API-Attestation"] == "attestation-fresh"
+    assert retry_headers["X-Device-Status"] == "status-fresh"
 
 
 def test_client_uses_requested_country() -> None:
