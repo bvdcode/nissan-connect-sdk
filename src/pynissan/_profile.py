@@ -44,6 +44,8 @@ _MOBILE_CLIENT_ID = "6wYMOME6Rs4kWVxS4i6b2RUsR4Ma"
 _MOBILE_CLIENT_SECRET = "fWp6esCzsq3vCY6RLf3p_CV_ukAa"
 _MOBILE_PACKAGE = "com.nissan.mynissan"
 _MOBILE_VERSION = "6.9.110"
+_AUTH_CLIENT_ID = "iT1JQ_0O4fLcdeDOsLiFXnkDQr8a"
+_AUTH_CLIENT_SECRET = "DZ_FfwmunpUUTaNZZ7yDz_fc7Loa"
 
 
 def _https_endpoint(host: tuple[str, ...], *path: str) -> str:
@@ -57,9 +59,9 @@ _US_PROFILE = _CountryProfile(
         "iotmw-hades-ccs",
         "graphql",
     ),
-    client_id=_MOBILE_CLIENT_ID,
-    client_secret=_MOBILE_CLIENT_SECRET,
-    oauth_scope="openid device_{device_id}+internal_login",
+    client_id=_AUTH_CLIENT_ID,
+    client_secret=_AUTH_CLIENT_SECRET,
+    oauth_scope="ROP internal_login openid",
     app_package=_MOBILE_PACKAGE,
     app_version=_MOBILE_VERSION,
     application_client_id=_MOBILE_CLIENT_ID,

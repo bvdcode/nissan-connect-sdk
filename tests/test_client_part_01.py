@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from base64 import b64decode
 from collections.abc import Mapping
 from typing import cast
 
@@ -144,11 +145,15 @@ async def test_authenticate_normalizes_credentials_and_publishes_tokens() -> Non
     assert call["data"] == {
         "username": "NISNNAVCS/owner@example.com",
         "password": "secret",
-        "scope": "openid device_device-123+internal_login",
+        "scope": "ROP internal_login openid",
         "grant_type": "password",
     }
     headers = cast(Mapping[str, str], call["headers"])
-    assert headers["Authorization"].startswith("Basic ")
+    encoded_credentials = headers["Authorization"].removeprefix("Basic ")
+    client_id, separator, client_secret = b64decode(encoded_credentials).decode().partition(":")
+    assert client_id == "iT1JQ_0O4fLcdeDOsLiFXnkDQr8a"
+    assert separator == ":"
+    assert client_secret
     assert headers["User-Agent"] == "okhttp/5.2.1"
 
 
