@@ -11,6 +11,7 @@ class _CountryProfile:
 
     token_endpoint: str
     graphql_endpoint: str
+    account_namespace: str
     client_id: str
     client_secret: str
     oauth_scope: str
@@ -40,39 +41,79 @@ class _CountryProfile:
         return f"{self.application_app_package}:android"
 
 
-_MOBILE_CLIENT_ID = "6wYMOME6Rs4kWVxS4i6b2RUsR4Ma"
-_MOBILE_CLIENT_SECRET = "fWp6esCzsq3vCY6RLf3p_CV_ukAa"
-_MOBILE_PACKAGE = "com.nissan.mynissan"
-_MOBILE_VERSION = "6.9.110"
-_AUTH_CLIENT_ID = "iT1JQ_0O4fLcdeDOsLiFXnkDQr8a"
-_AUTH_CLIENT_SECRET = "DZ_FfwmunpUUTaNZZ7yDz_fc7Loa"
+_ACCOUNT_NAMESPACE = "NISNNAVCS"
 
 
 def _https_endpoint(host: tuple[str, ...], *path: str) -> str:
     return urlunsplit(("https", ".".join(host), "/".join(path), "", ""))
 
 
+_TOKEN_ENDPOINT = _https_endpoint(("services", "nissanusa", "com"), "token")
+_GRAPHQL_ENDPOINT = _https_endpoint(
+    ("api-ccs", "na", "nissancloud", "com"),
+    "iotmw-hades-ccs",
+    "graphql",
+)
+
+
 _US_PROFILE = _CountryProfile(
-    token_endpoint=_https_endpoint(("services", "nissanusa", "com"), "token"),
-    graphql_endpoint=_https_endpoint(
-        ("api-ccs", "na", "nissancloud", "com"),
-        "iotmw-hades-ccs",
-        "graphql",
-    ),
-    client_id=_AUTH_CLIENT_ID,
-    client_secret=_AUTH_CLIENT_SECRET,
+    token_endpoint=_TOKEN_ENDPOINT,
+    graphql_endpoint=_GRAPHQL_ENDPOINT,
+    account_namespace=_ACCOUNT_NAMESPACE,
+    client_id="iT1JQ_0O4fLcdeDOsLiFXnkDQr8a",
+    client_secret="DZ_FfwmunpUUTaNZZ7yDz_fc7Loa",
     oauth_scope="ROP internal_login openid",
-    app_package=_MOBILE_PACKAGE,
-    app_version=_MOBILE_VERSION,
-    application_client_id=_MOBILE_CLIENT_ID,
-    application_client_secret=_MOBILE_CLIENT_SECRET,
+    app_package="com.nissan.mynissan",
+    app_version="6.9.110",
+    application_client_id="6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
+    application_client_secret="fWp6esCzsq3vCY6RLf3p_CV_ukAa",
     application_oauth_scope="openid device_{device_id}",
-    application_app_package=_MOBILE_PACKAGE,
-    application_app_version=_MOBILE_VERSION,
+    application_app_package="com.nissan.mynissan",
+    application_app_version="6.9.110",
     brand="Nissan",
     country=Country.US,
     accept_language="en-US",
     user_agent="okhttp/5.2.1",
+)
+
+_CA_PROFILE = _CountryProfile(
+    token_endpoint=_TOKEN_ENDPOINT,
+    graphql_endpoint=_GRAPHQL_ENDPOINT,
+    account_namespace=_ACCOUNT_NAMESPACE,
+    client_id="v9no_nW7GqHYsfAKkki6_N5AFVIa",
+    client_secret="Ynn56ncVx0yVffnDHIIMTWVYiuAa",
+    oauth_scope="openid device_{device_id}+internal_login",
+    app_package="ca.nissan.nissanconnectservices",
+    app_version="9.9.91",
+    application_client_id="v9no_nW7GqHYsfAKkki6_N5AFVIa",
+    application_client_secret="Ynn56ncVx0yVffnDHIIMTWVYiuAa",
+    application_oauth_scope="openid device_{device_id}",
+    application_app_package="ca.nissan.nissanconnectservices",
+    application_app_version="9.9.91",
+    brand="Nissan",
+    country=Country.CA,
+    accept_language="en-CA",
+    user_agent="okhttp/5.2.1",
+)
+
+_MX_PROFILE = _CountryProfile(
+    token_endpoint=_TOKEN_ENDPOINT,
+    graphql_endpoint=_GRAPHQL_ENDPOINT,
+    account_namespace=_ACCOUNT_NAMESPACE,
+    client_id="5RVUrd6tfV61TtlWFpLGm6UYoDka",
+    client_secret="vI_X2L2trvXhg94Q9DxAJdHXyJ0a",
+    oauth_scope="openid device_{device_id}+internal_login",
+    app_package="com.nissan.droid.mynissan",
+    app_version="6.2.31",
+    application_client_id="5RVUrd6tfV61TtlWFpLGm6UYoDka",
+    application_client_secret="vI_X2L2trvXhg94Q9DxAJdHXyJ0a",
+    application_oauth_scope="openid device_{device_id}",
+    application_app_package="com.nissan.droid.mynissan",
+    application_app_version="6.2.31",
+    brand="Nissan",
+    country=Country.MX,
+    accept_language="es-MX",
+    user_agent="okhttp/4.12.0",
 )
 
 
@@ -82,5 +123,9 @@ def profile_for(country: Country) -> _CountryProfile:
     match country:
         case Country.US:
             return _US_PROFILE
+        case Country.CA:
+            return _CA_PROFILE
+        case Country.MX:
+            return _MX_PROFILE
 
     assert_never(country)

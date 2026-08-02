@@ -79,7 +79,7 @@ class _NissanTransport:
 
         return await self._async_request_tokens(
             {
-                "username": f"NISNNAVCS/{email.strip().lower()}",
+                "username": f"{self._profile.account_namespace}/{email.strip().lower()}",
                 "password": password,
                 "scope": self._oauth_scope,
                 "grant_type": "password",

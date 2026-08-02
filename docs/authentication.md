@@ -4,6 +4,9 @@
 returned `Tokens` object contains the access, refresh, and optional ID tokens used by later
 requests.
 
+Select the account market with `Country.US`, `Country.CA`, or `Country.MX`. The country must
+match the market where the Nissan account is registered.
+
 ```python
 tokens = await client.async_authenticate(email, password)
 ```

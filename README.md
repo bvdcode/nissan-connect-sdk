@@ -9,8 +9,9 @@
 API for vehicle telemetry, charging, climate, remote commands, account data, and
 connected-service features.
 
-The client currently supports United States MyNISSAN accounts and includes Nissan Ariya
-telemetry and remote-control support.
+The client supports MyNISSAN accounts in the United States and Canada, plus MiNissan
+accounts in Mexico. Vehicle and subscription capabilities determine which telemetry and
+remote controls are available.
 
 ## Highlights
 
@@ -30,6 +31,8 @@ python -m pip install pynissan
 ```
 
 Python 3.12 or newer is required.
+
+Supported account markets are `Country.US`, `Country.CA`, and `Country.MX`.
 
 ## Quick start
 

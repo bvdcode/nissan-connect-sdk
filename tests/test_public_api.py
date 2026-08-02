@@ -15,6 +15,7 @@ def test_client_configuration_uses_country_selector() -> None:
     parameters = inspect.signature(NissanClient).parameters
 
     assert parameters["country"].default is Country.US
+    assert tuple(Country) == (Country.US, Country.CA, Country.MX)
     assert "config" not in parameters
 
 

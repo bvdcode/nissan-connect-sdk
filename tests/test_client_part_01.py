@@ -107,18 +107,42 @@ async def test_rejected_request_proof_is_refreshed_once() -> None:
     assert retry_headers["X-Device-Status"] == "status-fresh"
 
 
-def test_client_uses_requested_country() -> None:
+@pytest.mark.parametrize("country", tuple(Country))
+def test_client_uses_requested_country(country: Country) -> None:
     client = NissanClient(
         cast(ClientSession, FakeSession()),
-        country=Country.US,
+        country=country,
         tokens=TOKENS,
     )
 
-    assert client.country is Country.US
+    assert client.country is country
 
 
+@pytest.mark.parametrize(
+    ("country", "expected_client_id", "expected_scope", "expected_user_agent"),
+    (
+        (Country.US, "iT1JQ_0O4fLcdeDOsLiFXnkDQr8a", "ROP internal_login openid", "okhttp/5.2.1"),
+        (
+            Country.CA,
+            "v9no_nW7GqHYsfAKkki6_N5AFVIa",
+            "openid device_device-123+internal_login",
+            "okhttp/5.2.1",
+        ),
+        (
+            Country.MX,
+            "5RVUrd6tfV61TtlWFpLGm6UYoDka",
+            "openid device_device-123+internal_login",
+            "okhttp/4.12.0",
+        ),
+    ),
+)
 @pytest.mark.asyncio
-async def test_authenticate_normalizes_credentials_and_publishes_tokens() -> None:
+async def test_authenticate_normalizes_credentials_and_publishes_tokens(
+    country: Country,
+    expected_client_id: str,
+    expected_scope: str,
+    expected_user_agent: str,
+) -> None:
     session = FakeSession(
         FakeResponse(
             200,
@@ -132,6 +156,7 @@ async def test_authenticate_normalizes_credentials_and_publishes_tokens() -> Non
     published: list[Tokens] = []
     client = NissanClient(
         cast(ClientSession, session),
+        country=country,
         oauth_device_id="device-123",
         token_listener=published.append,
     )
@@ -145,31 +170,68 @@ async def test_authenticate_normalizes_credentials_and_publishes_tokens() -> Non
     assert call["data"] == {
         "username": "NISNNAVCS/owner@example.com",
         "password": "secret",
-        "scope": "ROP internal_login openid",
+        "scope": expected_scope,
         "grant_type": "password",
     }
     headers = cast(Mapping[str, str], call["headers"])
     encoded_credentials = headers["Authorization"].removeprefix("Basic ")
     client_id, separator, client_secret = b64decode(encoded_credentials).decode().partition(":")
-    assert client_id == "iT1JQ_0O4fLcdeDOsLiFXnkDQr8a"
+    assert client_id == expected_client_id
     assert separator == ":"
     assert client_secret
-    assert headers["User-Agent"] == "okhttp/5.2.1"
+    assert headers["User-Agent"] == expected_user_agent
 
 
+@pytest.mark.parametrize(
+    (
+        "country",
+        "expected_language",
+        "expected_client_name",
+        "expected_client_version",
+        "expected_user_agent",
+    ),
+    (
+        (Country.US, "en-US", "com.nissan.mynissan:android", "6.9.110", "okhttp/5.2.1"),
+        (
+            Country.CA,
+            "en-CA",
+            "ca.nissan.nissanconnectservices:android",
+            "9.9.91",
+            "okhttp/5.2.1",
+        ),
+        (
+            Country.MX,
+            "es-MX",
+            "com.nissan.droid.mynissan:android",
+            "6.2.31",
+            "okhttp/4.12.0",
+        ),
+    ),
+)
 @pytest.mark.asyncio
-async def test_graphql_uses_country_profile_and_identity_token() -> None:
+async def test_graphql_uses_country_profile_and_identity_token(
+    country: Country,
+    expected_language: str,
+    expected_client_name: str,
+    expected_client_version: str,
+    expected_user_agent: str,
+) -> None:
     session = FakeSession(FakeResponse(200, {"data": {"vehicles": []}}))
-    client = make_client(session)
+    client = NissanClient(
+        cast(ClientSession, session),
+        country=country,
+        tokens=TOKENS,
+    )
 
     assert await client.async_get_vehicles() == ()
 
     headers = cast(Mapping[str, str], session.calls[0]["headers"])
-    assert headers["Country"] == Country.US
-    assert headers["Accept-Language"] == "en-US"
+    assert headers["Country"] == country
+    assert headers["Accept-Language"] == expected_language
     assert headers["id-token"] == "id-token"
-    assert "apollographql-client-name" in headers
-    assert "apollographql-client-version" in headers
+    assert headers["apollographql-client-name"] == expected_client_name
+    assert headers["apollographql-client-version"] == expected_client_version
+    assert headers["User-Agent"] == expected_user_agent
 
 
 @pytest.mark.asyncio

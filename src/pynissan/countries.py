@@ -5,3 +5,5 @@ class Country(StrEnum):
     """Countries supported by the MyNISSAN client."""
 
     US = "US"
+    CA = "CA"
+    MX = "MX"

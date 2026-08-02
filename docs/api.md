@@ -8,6 +8,8 @@ The package exports `NissanClient`, `Country`, `Tokens`, `RequestProof`,
 
 The caller owns the `aiohttp.ClientSession` and closes it after all client work is complete.
 One client represents one account and one country.
+Supported account markets are the United States (`Country.US`), Canada (`Country.CA`), and
+Mexico (`Country.MX`).
 
 ```python
 from aiohttp import ClientSession
