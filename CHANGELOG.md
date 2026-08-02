@@ -6,6 +6,14 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 <!-- version list -->
 
+## v0.2.1 (2026-08-02)
+
+### Bug Fixes
+
+- Enable mobile command authorization
+  ([`cc74898`](https://github.com/bvdcode/nissan-connect-sdk/commit/cc748987a3840e3fa4ed0c70cf2d7d499d4e62db))
+
+
 ## v0.2.0 (2026-08-02)
 
 
