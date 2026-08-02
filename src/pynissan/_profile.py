@@ -42,6 +42,12 @@ class _CountryProfile:
 
 
 _ACCOUNT_NAMESPACE = "NISNNAVCS"
+_MOBILE_CLIENT_ID = "v9no_nW7GqHYsfAKkki6_N5AFVIa"
+_MOBILE_CLIENT_SECRET = "Ynn56ncVx0yVffnDHIIMTWVYiuAa"
+_MOBILE_OAUTH_SCOPE = "openid device_{device_id}+internal_login"
+_MOBILE_APP_PACKAGE = "ca.nissan.nissanconnectservices"
+_MOBILE_APP_VERSION = "9.9.91"
+_MOBILE_USER_AGENT = "okhttp/5.2.1"
 
 
 def _https_endpoint(host: tuple[str, ...], *path: str) -> str:
@@ -60,11 +66,11 @@ _US_PROFILE = _CountryProfile(
     token_endpoint=_TOKEN_ENDPOINT,
     graphql_endpoint=_GRAPHQL_ENDPOINT,
     account_namespace=_ACCOUNT_NAMESPACE,
-    client_id="iT1JQ_0O4fLcdeDOsLiFXnkDQr8a",
-    client_secret="DZ_FfwmunpUUTaNZZ7yDz_fc7Loa",
-    oauth_scope="ROP internal_login openid",
-    app_package="com.nissan.mynissan",
-    app_version="6.9.110",
+    client_id=_MOBILE_CLIENT_ID,
+    client_secret=_MOBILE_CLIENT_SECRET,
+    oauth_scope=_MOBILE_OAUTH_SCOPE,
+    app_package=_MOBILE_APP_PACKAGE,
+    app_version=_MOBILE_APP_VERSION,
     application_client_id="6wYMOME6Rs4kWVxS4i6b2RUsR4Ma",
     application_client_secret="fWp6esCzsq3vCY6RLf3p_CV_ukAa",
     application_oauth_scope="openid device_{device_id}",
@@ -73,38 +79,38 @@ _US_PROFILE = _CountryProfile(
     brand="Nissan",
     country=Country.US,
     accept_language="en-US",
-    user_agent="okhttp/5.2.1",
+    user_agent=_MOBILE_USER_AGENT,
 )
 
 _CA_PROFILE = _CountryProfile(
     token_endpoint=_TOKEN_ENDPOINT,
     graphql_endpoint=_GRAPHQL_ENDPOINT,
     account_namespace=_ACCOUNT_NAMESPACE,
-    client_id="v9no_nW7GqHYsfAKkki6_N5AFVIa",
-    client_secret="Ynn56ncVx0yVffnDHIIMTWVYiuAa",
-    oauth_scope="openid device_{device_id}+internal_login",
-    app_package="ca.nissan.nissanconnectservices",
-    app_version="9.9.91",
-    application_client_id="v9no_nW7GqHYsfAKkki6_N5AFVIa",
-    application_client_secret="Ynn56ncVx0yVffnDHIIMTWVYiuAa",
+    client_id=_MOBILE_CLIENT_ID,
+    client_secret=_MOBILE_CLIENT_SECRET,
+    oauth_scope=_MOBILE_OAUTH_SCOPE,
+    app_package=_MOBILE_APP_PACKAGE,
+    app_version=_MOBILE_APP_VERSION,
+    application_client_id=_MOBILE_CLIENT_ID,
+    application_client_secret=_MOBILE_CLIENT_SECRET,
     application_oauth_scope="openid device_{device_id}",
-    application_app_package="ca.nissan.nissanconnectservices",
-    application_app_version="9.9.91",
+    application_app_package=_MOBILE_APP_PACKAGE,
+    application_app_version=_MOBILE_APP_VERSION,
     brand="Nissan",
     country=Country.CA,
     accept_language="en-CA",
-    user_agent="okhttp/5.2.1",
+    user_agent=_MOBILE_USER_AGENT,
 )
 
 _MX_PROFILE = _CountryProfile(
     token_endpoint=_TOKEN_ENDPOINT,
     graphql_endpoint=_GRAPHQL_ENDPOINT,
     account_namespace=_ACCOUNT_NAMESPACE,
-    client_id="5RVUrd6tfV61TtlWFpLGm6UYoDka",
-    client_secret="vI_X2L2trvXhg94Q9DxAJdHXyJ0a",
-    oauth_scope="openid device_{device_id}+internal_login",
-    app_package="com.nissan.droid.mynissan",
-    app_version="6.2.31",
+    client_id=_MOBILE_CLIENT_ID,
+    client_secret=_MOBILE_CLIENT_SECRET,
+    oauth_scope=_MOBILE_OAUTH_SCOPE,
+    app_package=_MOBILE_APP_PACKAGE,
+    app_version=_MOBILE_APP_VERSION,
     application_client_id="5RVUrd6tfV61TtlWFpLGm6UYoDka",
     application_client_secret="vI_X2L2trvXhg94Q9DxAJdHXyJ0a",
     application_oauth_scope="openid device_{device_id}",
@@ -113,7 +119,7 @@ _MX_PROFILE = _CountryProfile(
     brand="Nissan",
     country=Country.MX,
     accept_language="es-MX",
-    user_agent="okhttp/4.12.0",
+    user_agent=_MOBILE_USER_AGENT,
 )
 
 

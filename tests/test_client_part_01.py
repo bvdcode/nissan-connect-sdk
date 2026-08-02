@@ -121,7 +121,12 @@ def test_client_uses_requested_country(country: Country) -> None:
 @pytest.mark.parametrize(
     ("country", "expected_client_id", "expected_scope", "expected_user_agent"),
     (
-        (Country.US, "iT1JQ_0O4fLcdeDOsLiFXnkDQr8a", "ROP internal_login openid", "okhttp/5.2.1"),
+        (
+            Country.US,
+            "v9no_nW7GqHYsfAKkki6_N5AFVIa",
+            "openid device_device-123+internal_login",
+            "okhttp/5.2.1",
+        ),
         (
             Country.CA,
             "v9no_nW7GqHYsfAKkki6_N5AFVIa",
@@ -130,9 +135,9 @@ def test_client_uses_requested_country(country: Country) -> None:
         ),
         (
             Country.MX,
-            "5RVUrd6tfV61TtlWFpLGm6UYoDka",
+            "v9no_nW7GqHYsfAKkki6_N5AFVIa",
             "openid device_device-123+internal_login",
-            "okhttp/4.12.0",
+            "okhttp/5.2.1",
         ),
     ),
 )
@@ -191,7 +196,13 @@ async def test_authenticate_normalizes_credentials_and_publishes_tokens(
         "expected_user_agent",
     ),
     (
-        (Country.US, "en-US", "com.nissan.mynissan:android", "6.9.110", "okhttp/5.2.1"),
+        (
+            Country.US,
+            "en-US",
+            "ca.nissan.nissanconnectservices:android",
+            "9.9.91",
+            "okhttp/5.2.1",
+        ),
         (
             Country.CA,
             "en-CA",
@@ -202,9 +213,9 @@ async def test_authenticate_normalizes_credentials_and_publishes_tokens(
         (
             Country.MX,
             "es-MX",
-            "com.nissan.droid.mynissan:android",
-            "6.2.31",
-            "okhttp/4.12.0",
+            "ca.nissan.nissanconnectservices:android",
+            "9.9.91",
+            "okhttp/5.2.1",
         ),
     ),
 )
