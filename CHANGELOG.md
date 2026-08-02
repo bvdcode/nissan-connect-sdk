@@ -6,6 +6,9 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 <!-- version list -->
 
+## v0.2.0 (2026-08-02)
+
+
 ## v0.1.1 (2026-08-01)
 
 ### Bug Fixes
