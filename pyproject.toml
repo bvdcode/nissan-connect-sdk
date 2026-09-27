@@ -46,7 +46,7 @@ test = [
   "pytest>=9.1,<10",
   "pytest-asyncio>=1.4,<2",
   "ruff>=0.16,<0.17",
-  "twine>=6.2,<7",
+  "twine>=6.2,<8",
 ]
 
 [tool.setuptools.packages.find]
