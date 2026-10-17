@@ -45,7 +45,7 @@ test = [
   "python-semantic-release>=10.6,<11",
   "pytest>=9.1,<10",
   "pytest-asyncio>=1.4,<2",
-  "ruff>=0.16,<0.17",
+  "ruff>=0.16,<0.18",
   "twine>=6.2,<8",
 ]
 
