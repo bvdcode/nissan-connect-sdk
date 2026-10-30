@@ -6,6 +6,27 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 <!-- version list -->
 
+## v0.2.2 (2026-10-30)
+
+### Bug Fixes
+
+- **auth**: Use Canadian account namespace
+  ([`2a3756c`](https://github.com/bvdcode/nissan-connect-sdk/commit/2a3756c716139745056d7851bb69341506fc5502))
+
+### Build System
+
+- **deps-dev**: Allow twine 7
+  ([`662eb08`](https://github.com/bvdcode/nissan-connect-sdk/commit/662eb082c699de75ba853a17920408dfeec94f2d))
+
+### Chores
+
+- Add Ko-fi funding
+  ([`9f436d5`](https://github.com/bvdcode/nissan-connect-sdk/commit/9f436d567f4fe1cd25a6fd0a754bf888a07f0bfb))
+
+- **deps**: Update semantic-release action to 10.7.0
+  ([`828bde6`](https://github.com/bvdcode/nissan-connect-sdk/commit/828bde6cb1e04b7a25003534e376c84d23e1be75))
+
+
 ## v0.2.1 (2026-08-02)
 
 ### Bug Fixes
