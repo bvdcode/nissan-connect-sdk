@@ -119,22 +119,31 @@ def test_client_uses_requested_country(country: Country) -> None:
 
 
 @pytest.mark.parametrize(
-    ("country", "expected_client_id", "expected_scope", "expected_user_agent"),
+    (
+        "country",
+        "expected_namespace",
+        "expected_client_id",
+        "expected_scope",
+        "expected_user_agent",
+    ),
     (
         (
             Country.US,
+            "NISNNAVCS",
             "v9no_nW7GqHYsfAKkki6_N5AFVIa",
             "openid device_device-123+internal_login",
             "okhttp/5.2.1",
         ),
         (
             Country.CA,
+            "NISNCIVCS",
             "v9no_nW7GqHYsfAKkki6_N5AFVIa",
             "openid device_device-123+internal_login",
             "okhttp/5.2.1",
         ),
         (
             Country.MX,
+            "NISNNAVCS",
             "v9no_nW7GqHYsfAKkki6_N5AFVIa",
             "openid device_device-123+internal_login",
             "okhttp/5.2.1",
@@ -144,6 +153,7 @@ def test_client_uses_requested_country(country: Country) -> None:
 @pytest.mark.asyncio
 async def test_authenticate_normalizes_credentials_and_publishes_tokens(
     country: Country,
+    expected_namespace: str,
     expected_client_id: str,
     expected_scope: str,
     expected_user_agent: str,
@@ -173,7 +183,7 @@ async def test_authenticate_normalizes_credentials_and_publishes_tokens(
     call = session.calls[0]
     assert str(call["url"]).endswith("/token")
     assert call["data"] == {
-        "username": "NISNNAVCS/owner@example.com",
+        "username": f"{expected_namespace}/owner@example.com",
         "password": "secret",
         "scope": expected_scope,
         "grant_type": "password",
