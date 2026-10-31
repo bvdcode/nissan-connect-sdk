@@ -9,6 +9,14 @@ class ReadOnlyError(NissanError):
     """Raised when a state-changing operation is blocked by read-only mode."""
 
 
+class UnsupportedCommandError(NissanError):
+    """Raised when a command lacks an enabled service and confirmed subscription."""
+
+    def __init__(self, command: str) -> None:
+        super().__init__(f"{command} is not available for this vehicle and subscription")
+        self.command = command
+
+
 class NetworkError(NissanError):
     """Raised when the upstream service cannot be reached."""
 
