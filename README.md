@@ -18,10 +18,11 @@ remote controls are available.
 - Fully async I/O built on `aiohttp`.
 - Typed, immutable response models and a `py.typed` marker.
 - Cached vehicle, battery, charging, climate, door, location, tire, and mileage data.
+- Charging completion estimates, active warnings, and vehicle image URLs.
 - Charging, climate, lock, light, horn, engine, location, and status-refresh commands.
 - Climate and charge schedules, vehicle capabilities, alerts, maintenance, and history.
 - Automatic access-token refresh with a callback for persisting replacement tokens.
-- Typed command requests with status polling and terminal results.
+- Subscription-aware lock and light/horn controls, with typed requests and status polling.
 - Read-only mode enabled by default for safe discovery and monitoring.
 
 ## Installation
@@ -116,17 +117,27 @@ result = await client.async_wait_for_service_request(vin, request)
 
 ## Charging state
 
-Battery status distinguishes the cable and charging states and includes the server-provided
-remaining charge time.
+Battery status distinguishes the cable and charging states. The server-provided remaining
+charge time is in minutes; the model also exposes a duration and completion estimate.
 
 ```python
+from datetime import UTC, datetime
+
 battery = await client.async_get_vehicle_battery_status(vin)
+observed_at = datetime.now(UTC)
 if battery is not None:
     print(battery.level)
     print(battery.is_plugged_in)
     print(battery.is_charging)
     print(battery.remaining_charge_time)
+    print(battery.remaining_charge_duration)
+    print(battery.estimate_charge_completion(observed_at))
 ```
+
+Estimates require active charging and a nonnegative remaining time. They use an explicit,
+timezone-aware observation timestamp; cached status can be stale. The
+[telemetry reference](docs/api.md#vehicle-telemetry) covers odometer units, tire pressures,
+nullable door/lock states, warnings, and vehicle artwork.
 
 ## Errors
 
@@ -137,7 +148,8 @@ All package exceptions inherit from `NissanError`:
 - `ApiError` for rejected HTTP requests;
 - `GraphQLError` for rejected GraphQL operations;
 - `ResponseError` for malformed responses;
-- `ReadOnlyError` for blocked state-changing operations.
+- `ReadOnlyError` for blocked state-changing operations;
+- `UnsupportedCommandError` for lock or light/horn commands without confirmed service availability.
 
 ## Development
 

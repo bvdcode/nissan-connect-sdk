@@ -307,6 +307,7 @@ from .exceptions import (
     NissanError,
     ReadOnlyError,
     ResponseError,
+    UnsupportedCommandError,
 )
 from .extended_vehicle_inputs import EmpConnectorLevelInput, EmpEvseStatusInput
 from .extended_vehicle_models import (
@@ -1291,6 +1292,7 @@ __all__ = [
     "UnselectedInsuranceResult",
     "UnselectedSecondDeliveryResult",
     "UnsetType",
+    "UnsupportedCommandError",
     "UpdateAccountAddressError",
     "UpdateAccountFirstNameError",
     "UpdateAccountGeneralError",
