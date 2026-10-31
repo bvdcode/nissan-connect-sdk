@@ -1,6 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Final
+
+_DOOR_LOCK_UNLOCK_SERVICE: Final = "REMOTE_DOOR_LOCK_UNLOCK"
+_DOOR_LOCK_SERVICE: Final = "REMOTE_DOOR_LOCK"
+_DOOR_UNLOCK_SERVICE: Final = "REMOTE_DOOR_UNLOCK"
+_HORN_LIGHTS_SERVICE: Final = "REMOTE_HORN_LIGHTS"
 
 
 @dataclass(frozen=True, slots=True)
@@ -10,6 +16,12 @@ class ServiceCapability:
     type: str
     enabled: bool
     subscribed: bool | None
+
+    @property
+    def is_available(self) -> bool:
+        """Return whether the service is enabled with a confirmed subscription."""
+
+        return self.enabled and self.subscribed is True
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,3 +100,40 @@ class VehicleCapabilities:
     enrollment_status: str | None
     services: tuple[ServiceCapability, ...]
     accessories_details: VehicleAccessoriesDetails | None = None
+
+    def supports_service(self, service_type: str) -> bool:
+        """Return whether the named service is enabled and subscribed."""
+
+        return any(
+            service.type == service_type and service.is_available for service in self.services
+        )
+
+    @property
+    def can_lock_doors(self) -> bool:
+        """Return whether either a combined or lock-only service is available."""
+
+        return any(
+            self.supports_service(service_type)
+            for service_type in (_DOOR_LOCK_UNLOCK_SERVICE, _DOOR_LOCK_SERVICE)
+        )
+
+    @property
+    def can_unlock_doors(self) -> bool:
+        """Return whether either a combined or unlock-only service is available."""
+
+        return any(
+            self.supports_service(service_type)
+            for service_type in (_DOOR_LOCK_UNLOCK_SERVICE, _DOOR_UNLOCK_SERVICE)
+        )
+
+    @property
+    def can_flash_lights(self) -> bool:
+        """Return whether the remote horn/lights service is available."""
+
+        return self.supports_service(_HORN_LIGHTS_SERVICE)
+
+    @property
+    def can_flash_lights_and_horn(self) -> bool:
+        """Return whether flashing the lights with the horn is available."""
+
+        return self.can_flash_lights
