@@ -6,19 +6,6 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 <!-- version list -->
 
-## v0.2.3 (2026-10-31)
-
-Added charging estimates and subscription-aware vehicle controls
-
-Added charging duration and estimated completion time, normalized door, lock, trunk and hood states, and active warning counts and messages.
-
-Documented odometer readings, all four tire pressures in psi and vehicle image URLs.
-
-Door locking, unlocking, flashing lights and flashing lights with the horn now require confirmed vehicle support and an active subscription.
-
-Release versions are calculated automatically with GitVersion. Release notes are taken from the commit message.
-
-
 ## v0.2.2 (2026-10-30)
 
 ### Bug Fixes
