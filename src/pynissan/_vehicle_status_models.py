@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from typing import ClassVar, Literal
 
 from ._core_models import DistanceUnit
 
@@ -32,6 +33,18 @@ class DoorState:
     window: str | None
     lock: str | None
 
+    @property
+    def is_open(self) -> bool | None:
+        """Return whether the door is open, or None for an unknown state."""
+
+        return _opening_is_open(self.ajar)
+
+    @property
+    def is_locked(self) -> bool | None:
+        """Return whether the door is locked, or None for an unknown state."""
+
+        return _lock_is_locked(self.lock)
+
 
 @dataclass(frozen=True, slots=True)
 class DoorsStatus:
@@ -47,6 +60,30 @@ class DoorsStatus:
     sunroof_ajar: str | None
     trunk_lock: str | None
     overall_lock: str | None
+
+    @property
+    def is_locked(self) -> bool | None:
+        """Return the reported overall lock state without inferring missing values."""
+
+        return _lock_is_locked(self.overall_lock)
+
+    @property
+    def is_trunk_locked(self) -> bool | None:
+        """Return the reported trunk lock state, or None when unknown."""
+
+        return _lock_is_locked(self.trunk_lock)
+
+    @property
+    def is_trunk_open(self) -> bool | None:
+        """Return whether the reported rear hatch is open, or None when unknown."""
+
+        return _opening_is_open(self.hatch_ajar)
+
+    @property
+    def is_hood_open(self) -> bool | None:
+        """Return whether the engine hood is open, or None when unknown."""
+
+        return _opening_is_open(self.engine_hood_ajar)
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,7 +122,9 @@ class BatteryStatus:
 
 @dataclass(frozen=True, slots=True)
 class TirePressure:
-    """Raw tire pressure and status values returned by the API."""
+    """Reported pressure for each tire in pounds per square inch (psi)."""
+
+    unit: ClassVar[Literal["psi"]] = "psi"
 
     last_updated_at: datetime | None
     front_left: int | None
@@ -147,6 +186,28 @@ class VehicleStatus:
     maintenance_indicators: tuple[MaintenanceIndicator, ...]
     engine_oil_drain_range: EngineOilDrainRange | None = None
 
+    @property
+    def active_warnings(self) -> tuple[MaintenanceIndicator, ...]:
+        """Return indicators explicitly marked active by the service."""
+
+        return tuple(item for item in self.maintenance_indicators if item.active is True)
+
+    @property
+    def warning_count(self) -> int:
+        """Return the number of reported active maintenance indicators."""
+
+        return len(self.active_warnings)
+
+    @property
+    def warning_messages(self) -> tuple[str, ...]:
+        """Return available messages for active warnings without truncation."""
+
+        return tuple(
+            item.detailed_message
+            for item in self.active_warnings
+            if item.detailed_message is not None
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class VehicleLocation:
@@ -156,3 +217,23 @@ class VehicleLocation:
     latitude: float | None
     longitude: float | None
     last_updated_at: datetime | None
+
+
+def _opening_is_open(value: str | None) -> bool | None:
+    match value:
+        case "OPEN":
+            return True
+        case "CLOSED":
+            return False
+        case _:
+            return None
+
+
+def _lock_is_locked(value: str | None) -> bool | None:
+    match value:
+        case "LOCKED":
+            return True
+        case "UNLOCKED":
+            return False
+        case _:
+            return None
