@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=77"]
+requires = ["setuptools>=80", "setuptools-scm[simple]>=10,<11"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pynissan"
-version = "0.2.4"
+dynamic = ["version"]
 description = "Async Python client for MyNISSAN connected vehicles"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.urls]
-Changelog = "https://github.com/bvdcode/nissan-connect-sdk/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/bvdcode/nissan-connect-sdk/releases"
 Documentation = "https://github.com/bvdcode/nissan-connect-sdk/tree/main/docs"
 Issues = "https://github.com/bvdcode/nissan-connect-sdk/issues"
 Repository = "https://github.com/bvdcode/nissan-connect-sdk"

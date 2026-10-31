@@ -1,6 +1,7 @@
 # Changelog
 
-All notable changes to `pynissan` are documented in this file.
+Release notes are published on the [GitHub releases page](https://github.com/bvdcode/nissan-connect-sdk/releases).
+Earlier versions are also listed below.
 
 The project follows [Semantic Versioning](https://semver.org/).
 

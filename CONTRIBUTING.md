@@ -45,14 +45,10 @@ details, private URLs, or captured customer responses.
 Keep each pull request focused and describe the product behavior it changes. Include tests for
 new behavior and note any vehicle capability required to exercise it.
 
-Pull requests are squash merged. Use a Conventional Commit title because the resulting merge
-commit controls versioning and becomes the release-note entry:
+Target `develop` for development changes. Completed work is merged into `main` for release.
+The final commit message on `main` becomes the release notes: start with what changed and add
+plain-text details after a blank line. Conventional Commit prefixes are not required.
 
-- `feat:` for a new public capability and a minor release.
-- `fix:` or `perf:` for a patch release.
-- `BREAKING CHANGE:` in the body for a major release.
-- `build:`, `chore:`, `ci:`, `docs:`, `refactor:`, `style:`, or `test:` for changes that do not
-  release by themselves.
-
-Do not edit the project version or create version tags manually. The release workflow updates the
-version and changelog after a releasable commit reaches `main`.
+Do not edit the project version or create version tags manually. GitVersion calculates release
+versions automatically, and setuptools-scm supplies package build metadata without additional
+commits. See [Releasing](docs/releasing.md) for the complete publication flow.
