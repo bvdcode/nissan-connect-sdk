@@ -43,6 +43,7 @@ class _CountryProfile:
 
 _ACCOUNT_NAMESPACE = "NISNNAVCS"
 _CA_ACCOUNT_NAMESPACE = "NISNCIVCS"
+_MX_ACCOUNT_NAMESPACE = "MINISSAN"
 _MOBILE_CLIENT_ID = "v9no_nW7GqHYsfAKkki6_N5AFVIa"
 _MOBILE_CLIENT_SECRET = "Ynn56ncVx0yVffnDHIIMTWVYiuAa"
 _MOBILE_OAUTH_SCOPE = "openid device_{device_id}+internal_login"
@@ -106,7 +107,7 @@ _CA_PROFILE = _CountryProfile(
 _MX_PROFILE = _CountryProfile(
     token_endpoint=_TOKEN_ENDPOINT,
     graphql_endpoint=_GRAPHQL_ENDPOINT,
-    account_namespace=_ACCOUNT_NAMESPACE,
+    account_namespace=_MX_ACCOUNT_NAMESPACE,
     client_id=_MOBILE_CLIENT_ID,
     client_secret=_MOBILE_CLIENT_SECRET,
     oauth_scope=_MOBILE_OAUTH_SCOPE,
