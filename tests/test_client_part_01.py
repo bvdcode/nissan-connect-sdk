@@ -143,7 +143,7 @@ def test_client_uses_requested_country(country: Country) -> None:
         ),
         (
             Country.MX,
-            "NISNNAVCS",
+            "MINISSAN",
             "v9no_nW7GqHYsfAKkki6_N5AFVIa",
             "openid device_device-123+internal_login",
             "okhttp/5.2.1",

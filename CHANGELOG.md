@@ -6,6 +6,15 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 <!-- version list -->
 
+## v0.2.4 (2026-10-31)
+
+Corrected the Mexican account namespace and removed scheduled dependency updates
+
+Mexican accounts now use MINISSAN/<email> for sign-in. The shared OAuth client, token endpoint, and US and Canadian account profiles are unchanged.
+
+Removed the weekly Dependabot configuration for Python dependencies and GitHub Actions.
+
+
 ## v0.2.3 (2026-10-31)
 
 Added charging estimates and subscription-aware vehicle controls
