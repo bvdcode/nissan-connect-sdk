@@ -1,27 +1,30 @@
 # Releasing
 
 Every push to `main` runs `.github/workflows/publish.yml`. The workflow validates the source and
-uses Conventional Commits to decide whether a release is required. When a release is required,
-it updates `pyproject.toml` and `CHANGELOG.md`, creates a release commit and tag, builds the
-distributions, publishes them to PyPI with Trusted Publishing, and creates the matching GitHub
-release.
+uses GitVersion to calculate the next version. It builds the distributions, tags the source
+commit, publishes to PyPI with Trusted Publishing, and creates the matching GitHub release.
+The workflow does not create commits or push changes to a branch.
 
-Do not edit the package version, release section, or version tag manually.
+Do not edit the package version or create version tags manually. Package versions are read from
+Git metadata by setuptools-scm; release builds use the exact version calculated by GitVersion.
 
 ## Version selection
 
-Use a Conventional Commit title for a direct commit or squash-merged pull request:
+GitVersion uses the branch history, existing `vX.Y.Z` tags, and `GitVersion.yml`. Conventional
+Commit prefixes are not required. Each new version reaching `main` is published automatically.
 
-- `fix: handle an expired access token` creates a patch release.
-- `perf: reduce vehicle refresh requests` creates a patch release.
-- `feat: add charging schedule support` creates a minor release.
-- A `BREAKING CHANGE:` paragraph in the commit body creates a major release.
-- `build:`, `chore:`, `ci:`, `docs:`, `refactor:`, `style:`, and `test:` do not create a release
-  by themselves.
+The title and body of the final commit on `main` become the GitHub release notes verbatim.
+Describe the completed changes in the first line and add plain-text details after a blank line.
+For example:
 
-The generated release notes use the parsed title and body of every releasable commit since the
-previous version. Squash merging a focused pull request therefore produces one focused release
-entry from its merge commit.
+```text
+Added charging estimates and subscription-aware vehicle controls
+
+Charging status now includes remaining duration and estimated completion time.
+Remote controls require confirmed vehicle support and an active subscription.
+```
+
+Release notes are published on the [GitHub releases page](https://github.com/bvdcode/nissan-connect-sdk/releases).
 
 ## One-time PyPI setup
 
@@ -38,13 +41,14 @@ first successful workflow creates the project and converts the pending publisher
 
 ## Release flow
 
-1. Push or squash-merge a Conventional Commit into `main`.
+1. Develop focused changes on `develop`, then merge into `main` with the release description as
+   the merge commit message.
 2. CI validates linting, formatting, typing, module size, tests, and package metadata.
-3. Python Semantic Release calculates the next version and generates the changelog.
-4. The workflow commits the generated version, creates the corresponding `vX.Y.Z` tag, and builds
-   the wheel and source distribution.
+3. GitVersion calculates the next version.
+4. The workflow builds and validates the wheel and source distribution, then creates the
+   corresponding `vX.Y.Z` tag on the existing source commit.
 5. Trusted Publishing uploads the artifacts to PyPI.
-6. The same artifacts and generated notes become the GitHub release.
+6. The same artifacts and commit message become the GitHub release.
 
 PyPI release files are immutable. Fix a failed release with a new commit and version rather than
 attempting to replace an uploaded file.
