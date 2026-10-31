@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 
 from ._core_models import DistanceUnit
 
@@ -51,13 +51,36 @@ class DoorsStatus:
 
 @dataclass(frozen=True, slots=True)
 class BatteryStatus:
-    """Reported electric vehicle battery status."""
+    """Reported battery status, with remaining charge time expressed in minutes."""
 
     level: int | None
     is_plugged_in: bool | None
     is_charging: bool | None
     remaining_charge_time: int | None
     remaining_mileage: DistanceReading | None
+
+    @property
+    def remaining_charge_duration(self) -> timedelta | None:
+        """Return a valid remaining duration only when charging is confirmed active."""
+
+        minutes = self.remaining_charge_time
+        if self.is_charging is not True or minutes is None or minutes < 0:
+            return None
+        return timedelta(minutes=minutes)
+
+    def estimate_charge_completion(self, observed_at: datetime) -> datetime | None:
+        """Estimate completion from an aware observation time and remaining duration.
+
+        This is a derived estimate, not a timestamp reported by the vehicle.
+        The caller supplies the time at which the cached status was obtained.
+        """
+
+        if observed_at.utcoffset() is None:
+            raise ValueError("observed_at must be timezone-aware")
+        duration = self.remaining_charge_duration
+        if duration is None:
+            return None
+        return (observed_at.astimezone(UTC) + duration).astimezone(observed_at.tzinfo)
 
 
 @dataclass(frozen=True, slots=True)
