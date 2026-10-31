@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from . import operations
-from ._client_base import _NissanClientBase
+from ._capability_client import _CapabilityClientMixin
 from .charge_plan_inputs import (
     charge_product_variables,
     pricing_details_variables,
@@ -60,9 +60,7 @@ from .models import (
     ChargeSchedule,
     DistanceUnit,
     SpeedUnit,
-    TemperatureUnit,
     V2LStatus,
-    VehicleCapabilities,
     VehicleChargeHistory,
 )
 from .navigation_inputs import (
@@ -72,7 +70,6 @@ from .parsing import (
     parse_charge_config,
     parse_charge_schedules,
     parse_v2l_status,
-    parse_vehicle_capabilities,
     parse_vehicle_charge_history,
 )
 from .pnc_models import (
@@ -118,21 +115,7 @@ from .v1g_parsing import (
 )
 
 
-class _EnergyClientMixin(_NissanClientBase):
-    async def async_get_vehicle_capabilities(
-        self,
-        vin: str,
-        temperature_unit: TemperatureUnit = TemperatureUnit.FAHRENHEIT,
-    ) -> VehicleCapabilities:
-        """Return the connected services advertised for a vehicle."""
-
-        data = await self._transport.async_graphql(
-            "VehicleCapabilities",
-            operations.VEHICLE_CAPABILITIES,
-            {"vin": vin, "unit": serialize_enum(temperature_unit)},
-        )
-        return parse_vehicle_capabilities(data, vin)
-
+class _EnergyClientMixin(_CapabilityClientMixin):
     async def async_get_charge_schedules(self, vin: str) -> tuple[ChargeSchedule, ...]:
         """Return the vehicle's recurring charge schedules."""
 

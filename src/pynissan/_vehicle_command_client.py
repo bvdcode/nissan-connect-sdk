@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from . import operations
-from ._client_base import _NissanClientBase
+from ._capability_client import _CapabilityClientMixin
 from ._client_helpers import (
     _charge_schedule_input,
     _climate_parameters_input,
@@ -9,19 +11,22 @@ from ._client_helpers import (
     _optional_variables,
     _temperature_input,
 )
+from .exceptions import UnsupportedCommandError
 from .models import (
     ChargeScheduleInput,
     ClimateScheduleInput,
     ClimateSettings,
     ServiceRequest,
     ServiceRequestKind,
+    VehicleCapabilities,
 )
 
 
-class _VehicleCommandClientMixin(_NissanClientBase):
+class _VehicleCommandClientMixin(_CapabilityClientMixin):
     async def async_lock_doors(self, vin: str) -> ServiceRequest:
-        """Lock the vehicle doors."""
+        """Lock the doors after confirming service support and subscription."""
 
+        await self._async_ensure_command_supported(vin, "DoorLock", lambda c: c.can_lock_doors)
         return await self._async_simple_service_request(
             "DoorLock",
             operations.DOOR_LOCK,
@@ -31,8 +36,9 @@ class _VehicleCommandClientMixin(_NissanClientBase):
         )
 
     async def async_unlock_doors(self, vin: str) -> ServiceRequest:
-        """Unlock the vehicle doors."""
+        """Unlock the doors after confirming service support and subscription."""
 
+        await self._async_ensure_command_supported(vin, "DoorUnlock", lambda c: c.can_unlock_doors)
         return await self._async_simple_service_request(
             "DoorUnlock",
             operations.DOOR_UNLOCK,
@@ -42,8 +48,9 @@ class _VehicleCommandClientMixin(_NissanClientBase):
         )
 
     async def async_flash_lights(self, vin: str) -> ServiceRequest:
-        """Flash the vehicle lights."""
+        """Flash the lights after confirming service support and subscription."""
 
+        await self._async_ensure_command_supported(vin, "FlashLights", lambda c: c.can_flash_lights)
         return await self._async_simple_service_request(
             "FlashLights",
             operations.FLASH_LIGHTS,
@@ -53,8 +60,11 @@ class _VehicleCommandClientMixin(_NissanClientBase):
         )
 
     async def async_flash_lights_and_horn(self, vin: str) -> ServiceRequest:
-        """Flash the lights and sound the horn."""
+        """Flash lights with the horn after confirming support and subscription."""
 
+        await self._async_ensure_command_supported(
+            vin, "FlashLightsHorn", lambda c: c.can_flash_lights_and_horn
+        )
         return await self._async_simple_service_request(
             "FlashLightsHorn",
             operations.FLASH_LIGHTS_HORN,
@@ -73,6 +83,17 @@ class _VehicleCommandClientMixin(_NissanClientBase):
             vin,
             ServiceRequestKind.LOCATION,
         )
+
+    async def _async_ensure_command_supported(
+        self,
+        vin: str,
+        command: str,
+        supported: Callable[[VehicleCapabilities], bool],
+    ) -> None:
+        self._ensure_write_allowed()
+        capabilities = await self.async_get_vehicle_capabilities(vin)
+        if not supported(capabilities):
+            raise UnsupportedCommandError(command)
 
     async def async_start_engine(
         self,
